@@ -15,9 +15,29 @@
 	},
 	"upload_source_maps": true,
 	"assets": {
+		"run_worker_first": [
+			"/l/*",
+			"/api/*"
+		],
 		"directory": "./dist/client",
 		"not_found_handling": "single-page-application"
-	}
+	},
+	"kv_namespaces": [
+		{
+			"binding": "KV",
+			"id": "33fbded2806b4c1a800364f4badcb20a",
+			"remote": true
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "qrs-db",
+			"database_id": "3fe4724d-1f3d-477d-89e2-28e753b6b1d7",
+			"migrations_dir": "./prisma/migrations",
+			"remote": false
+		}
+	]
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
