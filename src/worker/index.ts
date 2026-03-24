@@ -49,7 +49,7 @@ app.use('/api/auth/*', (c, next) => {
 app.get("/api/", (c) => c.json({ name: "dynamic-qr-codes-that-dont-suck-api", status: 'up' }));
 
 // Route for account signup
-app.post('/api/user', async c => {
+app.post('/api/entry', async c => {
     const { InitDb } = await import('./util/db.client');
     const client = await InitDb(c.env);
     const { newPasswordHash, verifyPassword } = await import('./util/password.things');
@@ -94,16 +94,21 @@ app.post('/api/user', async c => {
     const { sign } = await import('hono/jwt');
     const token = await sign(jwtPayload, c.env.JWT_SECRET, 'EdDSA');
     c.executionCtx.waitUntil(client.$disconnect());
-    return c.json({ token, 
-        name: user.name, 
-        email: user.email, 
-        phone: user.phone,
-        stripeCustomerId: !!user.stripeCustomerId,
-        monthlySubscription: !!user.monthlySubscription
-     })
+    return c.json({
+        token,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            stripeCustomerId: !!user.stripeCustomerId,
+            monthlySubscription: !!user.monthlySubscription
+        }
+    })
 });
 
 // Route for getting account QRs -- populates the user portal
+// TODO --> Add a update PUT logic
 app.get('/api/auth/info', async c => {
     const payload = c.get('jwtPayload') as JwtPayload;
     const { InitDb } = await import('./util/db.client');
@@ -113,7 +118,7 @@ app.get('/api/auth/info', async c => {
         include: { Qr: true }
     });
     c.executionCtx.waitUntil(client.$disconnect());
-    return c.json({user}, 200)
+    return c.json({ user }, 200)
 });
 
 // Route for buying new qrs
@@ -124,7 +129,7 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
     const { InitDb } = await import('./util/db.client');
     const client = await InitDb(c.env);
     const payload = c.get('jwtPayload') as JwtPayload;
-    
+
     switch (c.req.method) {
         case 'GET':
             // TODO: Implement this
@@ -132,9 +137,9 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
         case 'POST':
             const body = await c.req.json() as { stripePurchaseId: string, redirectLink: string };
             // TODO: Check the stripe purchase id is valid
-            if(body.stripePurchaseId === 'subscription'){
+            if (body.stripePurchaseId === 'subscription') {
                 // TODO: Check the user has a subscription
-                if (!payload.monthlySuber){
+                if (!payload.monthlySuber) {
                     return c.json({ error: 'invalid QR creation: no purchase or subscription' }, 400);
                 }
             } else {
