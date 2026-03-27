@@ -28,7 +28,7 @@ model User {
 
 model Qr {
   id               String   @id @default(uuid(7))
-  kvId             String // Not making this unique
+  kvId             String @unique
   active           Boolean  @default(true)
   redirectLink     String
   scanCount        Int      @default(0)

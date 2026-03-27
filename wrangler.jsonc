@@ -34,7 +34,7 @@
 			"binding": "DB",
 			"database_name": "qrs-db",
 			"database_id": "3fe4724d-1f3d-477d-89e2-28e753b6b1d7",
-			"migrations_dir": "./prisma/migrations",
+			"migrations_dir": "./prisma/d1_migrate",
 			"remote": false
 		}
 	]

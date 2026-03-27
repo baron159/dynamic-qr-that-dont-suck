@@ -19,7 +19,6 @@ Preview DB name: ``
 2) Then calc the diff between the states, note that `--from-empty` is only used in a inital migration (freash start). Otherwise `--from-local-d1` should be used
     > *OLD* `npx prisma migrate diff --from-empty --to-schema prisma/schema.prisma --output migrations/0001_init.sql`
 
-    > 
 ```bash
 npx prisma migrate diff \
   --from-empty \
@@ -27,7 +26,13 @@ npx prisma migrate diff \
   --script > prisma/migrations/0001_init.sql
 ```
 
-    > `npx prisma migrate diff --from-local-d1 --to-schema-datamodel ./prisma/schema.prisma --script --output ./prisma/migrations/000`
+    > *OLD* `npx prisma migrate diff --from-local-d1 --to-schema-datamodel ./prisma/schema.prisma --script --output ./prisma/migrations/000`
+
+```bash
+npx prisma migrate diff   --from-migrations ./prisma/migrations   --to-schema ./prisma/schema.prisma   --script > ./prisma/migrations/0002_minor_tweaks/migration.sql
+```
+
+### Need to create a secondary 'flat' migration folder for D1
 
 3) Exacute the migration locally
     > `npx wrangler d1 migrations apply qrs-db --local`

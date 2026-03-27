@@ -12,6 +12,8 @@
 		"publish": true
 	},
 	"dependencies": {
+		"@mantine/core": "^8.3.18",
+		"@mantine/hooks": "^8.3.18",
 		"@noble/hashes": "^2.0.1",
 		"@paralleldrive/cuid2": "^3.3.0",
 		"@prisma/adapter-d1": "^7.5.0",
@@ -22,7 +24,8 @@
 		"pc": "file:prisma/generated",
 		"pg": "^8.20.0",
 		"react": "19.2.1",
-		"react-dom": "19.2.1"
+		"react-dom": "19.2.1",
+		"wouter": "^3.9.0"
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.30.0",
@@ -37,6 +40,9 @@
 		"eslint-plugin-react-hooks": "7.0.1",
 		"eslint-plugin-react-refresh": "0.4.24",
 		"globals": "16.5.0",
+		"postcss": "^8.5.8",
+		"postcss-preset-mantine": "^1.18.0",
+		"postcss-simple-vars": "^7.0.1",
 		"prisma": "^7.5.0",
 		"typescript": "5.8.3",
 		"typescript-eslint": "8.48.0",

@@ -1,66 +1,38 @@
 // src/App.tsx
 
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import cloudflareLogo from "./assets/Cloudflare_Logo.svg";
-import honoLogo from "./assets/hono.svg";
+// import reactLogo from "./assets/react.svg";
+// import viteLogo from "/vite.svg";
+// import cloudflareLogo from "./assets/Cloudflare_Logo.svg";
+// import honoLogo from "./assets/hono.svg";
+import { AppShell } from '@mantine/core';
 import "./App.css";
+import { Route, Switch } from 'wouter';
+import PrivateRoute from "./componets/private.route";
+import EntryPage from "./pages/EntryPage";
+import { Dashboard } from "./pages/Dashboard";
 
 function App() {
-	const [count, setCount] = useState(0);
-	const [name, setName] = useState("unknown");
 
-	return (
-		<>
-			<div>
-				<a href="https://vite.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-				<a href="https://hono.dev/" target="_blank">
-					<img src={honoLogo} className="logo cloudflare" alt="Hono logo" />
-				</a>
-				<a href="https://workers.cloudflare.com/" target="_blank">
-					<img
-						src={cloudflareLogo}
-						className="logo cloudflare"
-						alt="Cloudflare logo"
-					/>
-				</a>
-			</div>
-			<h1>Vite + React + Hono + Cloudflare</h1>
-			<div className="card">
-				<button
-					onClick={() => setCount((count) => count + 1)}
-					aria-label="increment"
-				>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-			<div className="card">
-				<button
-					onClick={() => {
-						fetch("/api/")
-							.then((res) => res.json() as Promise<{ name: string }>)
-							.then((data) => setName(data.name));
-					}}
-					aria-label="get name"
-				>
-					Name from API is: {name}
-				</button>
-				<p>
-					Edit <code>worker/index.ts</code> to change the name
-				</p>
-			</div>
-			<p className="read-the-docs">Click on the logos to learn more</p>
-		</>
-	);
+
+    return (
+        <>
+            <AppShell header={{ height: 56, offset: true }}>
+                <AppShell.Header>
+                    Better QR
+                </AppShell.Header>
+                <AppShell.Main style={{ minHeight: 'calc(100vh - 64px)' }}>
+                    <Switch>
+                        <Route path="/login" component={EntryPage} />
+                        <PrivateRoute path="/dashboard" component={Dashboard} />
+                    </Switch>
+                </AppShell.Main>
+                <AppShell.Footer>
+                    Footer
+                </AppShell.Footer>
+            </AppShell>
+        </>
+    );
 }
 
 export default App;

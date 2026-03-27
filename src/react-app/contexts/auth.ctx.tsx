@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type React from 'react';
 
 interface UserSignIn { email: string, password: string };
-interface UserSignUp extends UserSignIn { name: string };
+interface UserSignUp extends UserSignIn { name: string, phone?: string };
 
 interface EntryResponse {
     token: string, user: UserFront
@@ -17,7 +17,6 @@ interface UserFront {
 interface AuthContextType {
     isAuthenticated: boolean;
     signin: (data: UserSignIn) => Promise<string>;
-    /** @deprecated this isnt really used anymore, however it is still relevant */
     signup: (data: UserSignUp) => Promise<string>;
     getUser: () => Promise<UserFront>;
     updateUser: (data: Partial<UserFront>) => Promise<void>;
@@ -33,25 +32,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<UserFront | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const entryEndpoint = '/api/entry';
+    const infoEndpoint = '/api/auth/info';
 
     useEffect(() => {
         // Replace this with your actual authentication check logic
         const tkn = localStorage.getItem('authToken');
-        const prof = localStorage.getItem('accessorProfile');
+        const prof = localStorage.getItem('userInfo');
         setToken(tkn);
         setIsAuthenticated(!!tkn);
         console.log('prof', typeof prof);
-        if (prof === 'undefined') setUser(null);
+        if (prof === 'undefined' || !prof) setUser(null);
         else setUser(JSON.parse(prof || '{}'));
     }, []);
 
     useEffect(() => {
-        if (token) {
-            getAccessor().then(aa => {
+        if (token && !user) {
+            getUser().then(aa => {
                 console.log('accessor gotten', aa);
             })
         }
-    }, [token])
+    }, [token, user])
 
     const signin = async (data: UserSignIn) => {
         const res = await fetch(entryEndpoint, {
@@ -67,7 +67,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         const body = await res.json() as EntryResponse;
         localStorage.setItem('authToken', body.token);
+        localStorage.setItem('userInfo', JSON.stringify(body.user));
         setToken(body.token);
+        setUser(body.user);
         setIsAuthenticated(true);
         return body.user.id;
     };
@@ -91,29 +93,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return body.user.id;
     }
 
-    // const getAccessor = async (forceTestCheck: boolean = false) => {
-    //     const req = new Request(`/api/auth${forceTestCheck ? '?testCheck=true' : ''}`)
-    //     injectHeader(req);
-    //     const res = await fetch(req);
-    //     if (res.status === 401) {
-    //         signout();
-    //     } else if (!res.ok) {
-    //         throw Error('Failed to get accessor');
-    //     }
-    //     const body = await res.json() as { accessor: Accessor, branding?: BrandingInfo };
-    //     setUser(body.accessor);
-    //     return body.accessor;
-    // }
+    const getUser = async () => {
+        const req = new Request(infoEndpoint);
+        injectHeader(req);
+        const res = await fetch(req);
+        if (!res.ok) {
+            throw Error('Failed to get user');
+        }
+        const body = await res.json() as { user: UserFront };
+        setUser(body.user);
+        return body.user;
+    }
 
     const signout = () => {
         localStorage.removeItem('authToken');
-        localStorage.removeItem('accessorProfile');
+        localStorage.removeItem('userInfo');
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
     };
 
-    const updateAccessor = async (data: Partial<Accessor>) => {
+    const updateUser = async (data: Partial<UserFront>) => {
+        // TODO: this endpoint is not yet implemented to handle this
         const req = new Request('/api/auth', {
             method: 'PUT',
             body: JSON.stringify(data),
@@ -123,8 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!res.ok) {
             throw Error('Failed to update accessor');
         }
-        const body = await res.json() as { accessor: Accessor };
-        setUser(body.accessor);
+        const body = await res.json() as { user: UserFront };
+        setUser(body.user);
     }
 
     const injectHeader = (req: Request) => {
@@ -136,7 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, signin, signup, signout, injectHeader, user: user, getUser: getAccessor, updateUser: updateAccessor }}>
+        <AuthContext.Provider value={{ isAuthenticated, signin, signup, signout, injectHeader, user: user, getUser, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

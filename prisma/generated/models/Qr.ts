@@ -266,10 +266,10 @@ export type QrOrderByWithRelationInput = {
 
 export type QrWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  kvId?: string
   AND?: Prisma.QrWhereInput | Prisma.QrWhereInput[]
   OR?: Prisma.QrWhereInput[]
   NOT?: Prisma.QrWhereInput | Prisma.QrWhereInput[]
-  kvId?: Prisma.StringFilter<"Qr"> | string
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
@@ -278,7 +278,7 @@ export type QrWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
   User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "kvId">
 
 export type QrOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

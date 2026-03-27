@@ -53,7 +53,7 @@ app.post('/api/entry', async c => {
     const { InitDb } = await import('./util/db.client');
     const client = await InitDb(c.env);
     const { newPasswordHash, verifyPassword } = await import('./util/password.things');
-    const body = await c.req.json() as { email: string, password: string, name?: string };
+    const body = await c.req.json() as { email: string, password: string, name?: string, phone?: string };
     let user: User | null;
     if ('name' in body && !!body.name) {
         // Create an account for the user
@@ -62,7 +62,8 @@ app.post('/api/entry', async c => {
             data: {
                 email: body.email,
                 passHash: passHash,
-                name: body.name
+                name: body.name,
+                phone: body.phone
             }
         });
     } else if ('name' in body && !body.name) {
@@ -107,7 +108,7 @@ app.post('/api/entry', async c => {
     })
 });
 
-// Route for getting account QRs -- populates the user portal
+// Route for getting account -- populates the user portal
 // TODO --> Add a update PUT logic
 app.get('/api/auth/info', async c => {
     const payload = c.get('jwtPayload') as JwtPayload;
@@ -115,7 +116,7 @@ app.get('/api/auth/info', async c => {
     const client = await InitDb(c.env);
     const user = await client.user.findUnique({
         where: { id: payload.userId },
-        include: { Qr: true }
+        omit: { passHash: true, updatedAt: true, createdAt: true }
     });
     c.executionCtx.waitUntil(client.$disconnect());
     return c.json({ user }, 200)
