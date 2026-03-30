@@ -11,6 +11,7 @@ import { Route, Switch } from 'wouter';
 import PrivateRoute from "./componets/private.route";
 import EntryPage from "./pages/EntryPage";
 import { Dashboard } from "./pages/Dashboard";
+import Landing from "./pages/Landing.tsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
                 </AppShell.Header>
                 <AppShell.Main style={{ minHeight: 'calc(100vh - 64px)' }}>
                     <Switch>
+                        <Route path='/' component={Landing} />
                         <Route path="/login" component={EntryPage} />
                         <PrivateRoute path="/dashboard" component={Dashboard} />
                     </Switch>

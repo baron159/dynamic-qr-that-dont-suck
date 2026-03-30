@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig({
 	plugins: [react(), cloudflare()],
 	server: {
-		allowedHosts: ['dev.baron.solutions'],
+		allowedHosts: ['dev.baron.solutions', 'wdev.baron.solutions'],
 		port: 7000
 	},
 	resolve: {

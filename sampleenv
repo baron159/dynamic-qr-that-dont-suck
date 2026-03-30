@@ -1,3 +1,6 @@
+#  Generate a private key with
+# `openssl genpkey -algorithm ED25519 -out ed25519.pem`
+
 JWT_SECRET="FILL"
 APP_HOST="https://dev.baron.solutions"
 CUID_SEED="FILL"
