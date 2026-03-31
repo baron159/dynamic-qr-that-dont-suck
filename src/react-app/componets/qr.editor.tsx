@@ -157,7 +157,13 @@ function ColorGradientControls({
   );
 }
 
-export function QrEditor() {
+export interface QrEditorProps {
+    disableQrTuningOptions?: boolean;
+    disableImgOptions?: boolean;
+    disableImage?: boolean;
+}
+
+export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false }: QrEditorProps) {
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -290,6 +296,7 @@ export function QrEditor() {
                     onChange={setImageFile}
                     clearable
                     placeholder="Upload logo"
+                    hidden={disableImage}
                   />
                 </Stack>
               </Accordion.Panel>
@@ -365,7 +372,7 @@ export function QrEditor() {
             </Accordion.Item>
 
             {/* Image Options */}
-            <Accordion.Item value="imageOptions">
+            <Accordion.Item value="imageOptions" hidden={disableImgOptions}>
               <Accordion.Control>Image Options</Accordion.Control>
               <Accordion.Panel>
                 <Stack gap="sm">
@@ -399,7 +406,7 @@ export function QrEditor() {
             </Accordion.Item>
 
             {/* QR Options */}
-            <Accordion.Item value="qrOptions">
+            <Accordion.Item value="qrOptions" hidden={disableQrTuningOptions}>
               <Accordion.Control>QR Options</Accordion.Control>
               <Accordion.Panel>
                 <Stack gap="sm">

@@ -21,7 +21,7 @@ model User {
   stripeCustomerId    String?
   monthlySubscription String? // Users can have
   Qr                  Qr[]
-
+  Credit              Credit[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -32,10 +32,23 @@ model Qr {
   active           Boolean  @default(true)
   redirectLink     String
   scanCount        Int      @default(0)
-  stripePurchaseId String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   User   User   @relation(fields: [userId], references: [id])
+  Credit Credit? @relation(fields: [creditId], references: [id])
   userId String
+  creditId String? // Optional because a subscription QR doesn't have a credit
+}
+
+// Credits are one-time purchased credits that can be used to create QR codes
+model Credit {
+  id String @id @default(uuid(7))
+  userId String
+  shopifyOrderId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User @relation(fields: [userId], references: [id])
+  Qr Qr[]
 }

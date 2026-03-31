@@ -9,7 +9,7 @@ import { MantineProvider } from '@mantine/core';
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<MantineProvider>
+		<MantineProvider defaultColorScheme="auto">
 			<AuthProvider>
 				<App />
 			</AuthProvider>
