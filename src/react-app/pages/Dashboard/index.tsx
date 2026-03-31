@@ -1,10 +1,10 @@
-import { Container, Title, Card, Tabs } from "@mantine/core";
+import { Title, Card, Tabs } from "@mantine/core";
 import { AccountPane } from "./Account";
 import { QrPane } from "./QrPane";
 
 
 export function Dashboard() {
-    return (<Card w={{ base: '90%', md: '60%', lg: '50%' }} mx="auto" withBorder mt="2rem">
+    return (<Card w={{ base: '95%', md: '90%', lg: '80%' }} mx="auto" withBorder mt="2rem">
         <Title order={1}>Dashboard</Title>
         <Tabs defaultValue={'qr'}>
             <Tabs.List>
