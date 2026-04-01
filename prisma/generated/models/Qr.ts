@@ -37,37 +37,40 @@ export type QrSumAggregateOutputType = {
 export type QrMinAggregateOutputType = {
   id: string | null
   kvId: string | null
+  nickname: string | null
   active: boolean | null
   redirectLink: string | null
   scanCount: number | null
-  stripePurchaseId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: string | null
+  creditId: string | null
 }
 
 export type QrMaxAggregateOutputType = {
   id: string | null
   kvId: string | null
+  nickname: string | null
   active: boolean | null
   redirectLink: string | null
   scanCount: number | null
-  stripePurchaseId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: string | null
+  creditId: string | null
 }
 
 export type QrCountAggregateOutputType = {
   id: number
   kvId: number
+  nickname: number
   active: number
   redirectLink: number
   scanCount: number
-  stripePurchaseId: number
   createdAt: number
   updatedAt: number
   userId: number
+  creditId: number
   _all: number
 }
 
@@ -83,37 +86,40 @@ export type QrSumAggregateInputType = {
 export type QrMinAggregateInputType = {
   id?: true
   kvId?: true
+  nickname?: true
   active?: true
   redirectLink?: true
   scanCount?: true
-  stripePurchaseId?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
+  creditId?: true
 }
 
 export type QrMaxAggregateInputType = {
   id?: true
   kvId?: true
+  nickname?: true
   active?: true
   redirectLink?: true
   scanCount?: true
-  stripePurchaseId?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
+  creditId?: true
 }
 
 export type QrCountAggregateInputType = {
   id?: true
   kvId?: true
+  nickname?: true
   active?: true
   redirectLink?: true
   scanCount?: true
-  stripePurchaseId?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
+  creditId?: true
   _all?: true
 }
 
@@ -206,13 +212,14 @@ export type QrGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type QrGroupByOutputType = {
   id: string
   kvId: string
+  nickname: string
   active: boolean
   redirectLink: string
   scanCount: number
-  stripePurchaseId: string | null
   createdAt: Date
   updatedAt: Date
   userId: string
+  creditId: string | null
   _count: QrCountAggregateOutputType | null
   _avg: QrAvgAggregateOutputType | null
   _sum: QrSumAggregateOutputType | null
@@ -220,7 +227,7 @@ export type QrGroupByOutputType = {
   _max: QrMaxAggregateOutputType | null
 }
 
-type GetQrGroupByPayload<T extends QrGroupByArgs> = Prisma.PrismaPromise<
+export type GetQrGroupByPayload<T extends QrGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<QrGroupByOutputType, T['by']> &
       {
@@ -241,27 +248,31 @@ export type QrWhereInput = {
   NOT?: Prisma.QrWhereInput | Prisma.QrWhereInput[]
   id?: Prisma.StringFilter<"Qr"> | string
   kvId?: Prisma.StringFilter<"Qr"> | string
+  nickname?: Prisma.StringFilter<"Qr"> | string
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
-  stripePurchaseId?: Prisma.StringNullableFilter<"Qr"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
+  creditId?: Prisma.StringNullableFilter<"Qr"> | string | null
   User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  Credit?: Prisma.XOR<Prisma.CreditNullableScalarRelationFilter, Prisma.CreditWhereInput> | null
 }
 
 export type QrOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   kvId?: Prisma.SortOrder
+  nickname?: Prisma.SortOrder
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
-  stripePurchaseId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  creditId?: Prisma.SortOrderInput | Prisma.SortOrder
   User?: Prisma.UserOrderByWithRelationInput
+  Credit?: Prisma.CreditOrderByWithRelationInput
 }
 
 export type QrWhereUniqueInput = Prisma.AtLeast<{
@@ -270,26 +281,29 @@ export type QrWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.QrWhereInput | Prisma.QrWhereInput[]
   OR?: Prisma.QrWhereInput[]
   NOT?: Prisma.QrWhereInput | Prisma.QrWhereInput[]
+  nickname?: Prisma.StringFilter<"Qr"> | string
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
-  stripePurchaseId?: Prisma.StringNullableFilter<"Qr"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
+  creditId?: Prisma.StringNullableFilter<"Qr"> | string | null
   User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  Credit?: Prisma.XOR<Prisma.CreditNullableScalarRelationFilter, Prisma.CreditWhereInput> | null
 }, "id" | "kvId">
 
 export type QrOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   kvId?: Prisma.SortOrder
+  nickname?: Prisma.SortOrder
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
-  stripePurchaseId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  creditId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.QrCountOrderByAggregateInput
   _avg?: Prisma.QrAvgOrderByAggregateInput
   _max?: Prisma.QrMaxOrderByAggregateInput
@@ -303,82 +317,88 @@ export type QrScalarWhereWithAggregatesInput = {
   NOT?: Prisma.QrScalarWhereWithAggregatesInput | Prisma.QrScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Qr"> | string
   kvId?: Prisma.StringWithAggregatesFilter<"Qr"> | string
+  nickname?: Prisma.StringWithAggregatesFilter<"Qr"> | string
   active?: Prisma.BoolWithAggregatesFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringWithAggregatesFilter<"Qr"> | string
   scanCount?: Prisma.IntWithAggregatesFilter<"Qr"> | number
-  stripePurchaseId?: Prisma.StringNullableWithAggregatesFilter<"Qr"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Qr"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Qr"> | string
+  creditId?: Prisma.StringNullableWithAggregatesFilter<"Qr"> | string | null
 }
 
 export type QrCreateInput = {
   id?: string
   kvId: string
+  nickname: string
   active?: boolean
   redirectLink: string
   scanCount?: number
-  stripePurchaseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   User: Prisma.UserCreateNestedOneWithoutQrInput
+  Credit?: Prisma.CreditCreateNestedOneWithoutQrInput
 }
 
 export type QrUncheckedCreateInput = {
   id?: string
   kvId: string
+  nickname: string
   active?: boolean
   redirectLink: string
   scanCount?: number
-  stripePurchaseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
+  creditId?: string | null
 }
 
 export type QrUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   User?: Prisma.UserUpdateOneRequiredWithoutQrNestedInput
+  Credit?: Prisma.CreditUpdateOneWithoutQrNestedInput
 }
 
 export type QrUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  creditId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type QrCreateManyInput = {
   id?: string
   kvId: string
+  nickname: string
   active?: boolean
   redirectLink: string
   scanCount?: number
-  stripePurchaseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
+  creditId?: string | null
 }
 
 export type QrUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -386,13 +406,14 @@ export type QrUpdateManyMutationInput = {
 export type QrUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  creditId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type QrListRelationFilter = {
@@ -408,13 +429,14 @@ export type QrOrderByRelationAggregateInput = {
 export type QrCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kvId?: Prisma.SortOrder
+  nickname?: Prisma.SortOrder
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
-  stripePurchaseId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  creditId?: Prisma.SortOrder
 }
 
 export type QrAvgOrderByAggregateInput = {
@@ -424,25 +446,27 @@ export type QrAvgOrderByAggregateInput = {
 export type QrMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kvId?: Prisma.SortOrder
+  nickname?: Prisma.SortOrder
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
-  stripePurchaseId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  creditId?: Prisma.SortOrder
 }
 
 export type QrMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kvId?: Prisma.SortOrder
+  nickname?: Prisma.SortOrder
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
-  stripePurchaseId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  creditId?: Prisma.SortOrder
 }
 
 export type QrSumOrderByAggregateInput = {
@@ -503,26 +527,70 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type QrCreateNestedManyWithoutCreditInput = {
+  create?: Prisma.XOR<Prisma.QrCreateWithoutCreditInput, Prisma.QrUncheckedCreateWithoutCreditInput> | Prisma.QrCreateWithoutCreditInput[] | Prisma.QrUncheckedCreateWithoutCreditInput[]
+  connectOrCreate?: Prisma.QrCreateOrConnectWithoutCreditInput | Prisma.QrCreateOrConnectWithoutCreditInput[]
+  createMany?: Prisma.QrCreateManyCreditInputEnvelope
+  connect?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+}
+
+export type QrUncheckedCreateNestedManyWithoutCreditInput = {
+  create?: Prisma.XOR<Prisma.QrCreateWithoutCreditInput, Prisma.QrUncheckedCreateWithoutCreditInput> | Prisma.QrCreateWithoutCreditInput[] | Prisma.QrUncheckedCreateWithoutCreditInput[]
+  connectOrCreate?: Prisma.QrCreateOrConnectWithoutCreditInput | Prisma.QrCreateOrConnectWithoutCreditInput[]
+  createMany?: Prisma.QrCreateManyCreditInputEnvelope
+  connect?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+}
+
+export type QrUpdateManyWithoutCreditNestedInput = {
+  create?: Prisma.XOR<Prisma.QrCreateWithoutCreditInput, Prisma.QrUncheckedCreateWithoutCreditInput> | Prisma.QrCreateWithoutCreditInput[] | Prisma.QrUncheckedCreateWithoutCreditInput[]
+  connectOrCreate?: Prisma.QrCreateOrConnectWithoutCreditInput | Prisma.QrCreateOrConnectWithoutCreditInput[]
+  upsert?: Prisma.QrUpsertWithWhereUniqueWithoutCreditInput | Prisma.QrUpsertWithWhereUniqueWithoutCreditInput[]
+  createMany?: Prisma.QrCreateManyCreditInputEnvelope
+  set?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  disconnect?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  delete?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  connect?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  update?: Prisma.QrUpdateWithWhereUniqueWithoutCreditInput | Prisma.QrUpdateWithWhereUniqueWithoutCreditInput[]
+  updateMany?: Prisma.QrUpdateManyWithWhereWithoutCreditInput | Prisma.QrUpdateManyWithWhereWithoutCreditInput[]
+  deleteMany?: Prisma.QrScalarWhereInput | Prisma.QrScalarWhereInput[]
+}
+
+export type QrUncheckedUpdateManyWithoutCreditNestedInput = {
+  create?: Prisma.XOR<Prisma.QrCreateWithoutCreditInput, Prisma.QrUncheckedCreateWithoutCreditInput> | Prisma.QrCreateWithoutCreditInput[] | Prisma.QrUncheckedCreateWithoutCreditInput[]
+  connectOrCreate?: Prisma.QrCreateOrConnectWithoutCreditInput | Prisma.QrCreateOrConnectWithoutCreditInput[]
+  upsert?: Prisma.QrUpsertWithWhereUniqueWithoutCreditInput | Prisma.QrUpsertWithWhereUniqueWithoutCreditInput[]
+  createMany?: Prisma.QrCreateManyCreditInputEnvelope
+  set?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  disconnect?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  delete?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  connect?: Prisma.QrWhereUniqueInput | Prisma.QrWhereUniqueInput[]
+  update?: Prisma.QrUpdateWithWhereUniqueWithoutCreditInput | Prisma.QrUpdateWithWhereUniqueWithoutCreditInput[]
+  updateMany?: Prisma.QrUpdateManyWithWhereWithoutCreditInput | Prisma.QrUpdateManyWithWhereWithoutCreditInput[]
+  deleteMany?: Prisma.QrScalarWhereInput | Prisma.QrScalarWhereInput[]
+}
+
 export type QrCreateWithoutUserInput = {
   id?: string
   kvId: string
+  nickname: string
   active?: boolean
   redirectLink: string
   scanCount?: number
-  stripePurchaseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  Credit?: Prisma.CreditCreateNestedOneWithoutQrInput
 }
 
 export type QrUncheckedCreateWithoutUserInput = {
   id?: string
   kvId: string
+  nickname: string
   active?: boolean
   redirectLink: string
   scanCount?: number
-  stripePurchaseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditId?: string | null
 }
 
 export type QrCreateOrConnectWithoutUserInput = {
@@ -556,57 +624,159 @@ export type QrScalarWhereInput = {
   NOT?: Prisma.QrScalarWhereInput | Prisma.QrScalarWhereInput[]
   id?: Prisma.StringFilter<"Qr"> | string
   kvId?: Prisma.StringFilter<"Qr"> | string
+  nickname?: Prisma.StringFilter<"Qr"> | string
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
-  stripePurchaseId?: Prisma.StringNullableFilter<"Qr"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
+  creditId?: Prisma.StringNullableFilter<"Qr"> | string | null
+}
+
+export type QrCreateWithoutCreditInput = {
+  id?: string
+  kvId: string
+  nickname: string
+  active?: boolean
+  redirectLink: string
+  scanCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  User: Prisma.UserCreateNestedOneWithoutQrInput
+}
+
+export type QrUncheckedCreateWithoutCreditInput = {
+  id?: string
+  kvId: string
+  nickname: string
+  active?: boolean
+  redirectLink: string
+  scanCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+}
+
+export type QrCreateOrConnectWithoutCreditInput = {
+  where: Prisma.QrWhereUniqueInput
+  create: Prisma.XOR<Prisma.QrCreateWithoutCreditInput, Prisma.QrUncheckedCreateWithoutCreditInput>
+}
+
+export type QrCreateManyCreditInputEnvelope = {
+  data: Prisma.QrCreateManyCreditInput | Prisma.QrCreateManyCreditInput[]
+}
+
+export type QrUpsertWithWhereUniqueWithoutCreditInput = {
+  where: Prisma.QrWhereUniqueInput
+  update: Prisma.XOR<Prisma.QrUpdateWithoutCreditInput, Prisma.QrUncheckedUpdateWithoutCreditInput>
+  create: Prisma.XOR<Prisma.QrCreateWithoutCreditInput, Prisma.QrUncheckedCreateWithoutCreditInput>
+}
+
+export type QrUpdateWithWhereUniqueWithoutCreditInput = {
+  where: Prisma.QrWhereUniqueInput
+  data: Prisma.XOR<Prisma.QrUpdateWithoutCreditInput, Prisma.QrUncheckedUpdateWithoutCreditInput>
+}
+
+export type QrUpdateManyWithWhereWithoutCreditInput = {
+  where: Prisma.QrScalarWhereInput
+  data: Prisma.XOR<Prisma.QrUpdateManyMutationInput, Prisma.QrUncheckedUpdateManyWithoutCreditInput>
 }
 
 export type QrCreateManyUserInput = {
   id?: string
   kvId: string
+  nickname: string
   active?: boolean
   redirectLink: string
   scanCount?: number
-  stripePurchaseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  creditId?: string | null
 }
 
 export type QrUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Credit?: Prisma.CreditUpdateOneWithoutQrNestedInput
 }
 
 export type QrUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type QrUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
-  stripePurchaseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type QrCreateManyCreditInput = {
+  id?: string
+  kvId: string
+  nickname: string
+  active?: boolean
+  redirectLink: string
+  scanCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+}
+
+export type QrUpdateWithoutCreditInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
+  scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  User?: Prisma.UserUpdateOneRequiredWithoutQrNestedInput
+}
+
+export type QrUncheckedUpdateWithoutCreditInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
+  scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type QrUncheckedUpdateManyWithoutCreditInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  kvId?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
+  scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -614,80 +784,92 @@ export type QrUncheckedUpdateManyWithoutUserInput = {
 export type QrSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kvId?: boolean
+  nickname?: boolean
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
-  stripePurchaseId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
+  creditId?: boolean
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
 }, ExtArgs["result"]["qr"]>
 
 export type QrSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kvId?: boolean
+  nickname?: boolean
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
-  stripePurchaseId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
+  creditId?: boolean
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
 }, ExtArgs["result"]["qr"]>
 
 export type QrSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kvId?: boolean
+  nickname?: boolean
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
-  stripePurchaseId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
+  creditId?: boolean
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
 }, ExtArgs["result"]["qr"]>
 
 export type QrSelectScalar = {
   id?: boolean
   kvId?: boolean
+  nickname?: boolean
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
-  stripePurchaseId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
+  creditId?: boolean
 }
 
-export type QrOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kvId" | "active" | "redirectLink" | "scanCount" | "stripePurchaseId" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["qr"]>
+export type QrOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kvId" | "nickname" | "active" | "redirectLink" | "scanCount" | "createdAt" | "updatedAt" | "userId" | "creditId", ExtArgs["result"]["qr"]>
 export type QrInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
 }
 export type QrIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
 }
 export type QrIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
 }
 
 export type $QrPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Qr"
   objects: {
     User: Prisma.$UserPayload<ExtArgs>
+    Credit: Prisma.$CreditPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     kvId: string
+    nickname: string
     active: boolean
     redirectLink: string
     scanCount: number
-    stripePurchaseId: string | null
     createdAt: Date
     updatedAt: Date
     userId: string
+    creditId: string | null
   }, ExtArgs["result"]["qr"]>
   composites: {}
 }
@@ -1083,6 +1265,7 @@ readonly fields: QrFieldRefs;
 export interface Prisma__QrClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   User<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  Credit<T extends Prisma.Qr$CreditArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Qr$CreditArgs<ExtArgs>>): Prisma.Prisma__CreditClient<runtime.Types.Result.GetResult<Prisma.$CreditPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1114,13 +1297,14 @@ export interface Prisma__QrClient<T, Null = never, ExtArgs extends runtime.Types
 export interface QrFieldRefs {
   readonly id: Prisma.FieldRef<"Qr", 'String'>
   readonly kvId: Prisma.FieldRef<"Qr", 'String'>
+  readonly nickname: Prisma.FieldRef<"Qr", 'String'>
   readonly active: Prisma.FieldRef<"Qr", 'Boolean'>
   readonly redirectLink: Prisma.FieldRef<"Qr", 'String'>
   readonly scanCount: Prisma.FieldRef<"Qr", 'Int'>
-  readonly stripePurchaseId: Prisma.FieldRef<"Qr", 'String'>
   readonly createdAt: Prisma.FieldRef<"Qr", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Qr", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Qr", 'String'>
+  readonly creditId: Prisma.FieldRef<"Qr", 'String'>
 }
     
 
@@ -1517,6 +1701,25 @@ export type QrDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Limit how many Qrs to delete.
    */
   limit?: number
+}
+
+/**
+ * Qr.Credit
+ */
+export type Qr$CreditArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Credit
+   */
+  select?: Prisma.CreditSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Credit
+   */
+  omit?: Prisma.CreditOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CreditInclude<ExtArgs> | null
+  where?: Prisma.CreditWhereInput
 }
 
 /**

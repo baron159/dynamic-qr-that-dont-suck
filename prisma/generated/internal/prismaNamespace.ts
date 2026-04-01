@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.5.0
- * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
+ * Prisma Client JS version: 7.6.0
+ * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.5.0",
-  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
+  client: "7.6.0",
+  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
 /**
@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
-  Qr: 'Qr'
+  Qr: 'Qr',
+  Credit: 'Credit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "qr"
+    modelProps: "user" | "qr" | "credit"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Credit: {
+      payload: Prisma.$CreditPayload<ExtArgs>
+      fields: Prisma.CreditFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CreditFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CreditFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>
+        }
+        findFirst: {
+          args: Prisma.CreditFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CreditFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>
+        }
+        findMany: {
+          args: Prisma.CreditFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>[]
+        }
+        create: {
+          args: Prisma.CreditCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>
+        }
+        createMany: {
+          args: Prisma.CreditCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CreditCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>[]
+        }
+        delete: {
+          args: Prisma.CreditDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>
+        }
+        update: {
+          args: Prisma.CreditUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>
+        }
+        deleteMany: {
+          args: Prisma.CreditDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CreditUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CreditUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>[]
+        }
+        upsert: {
+          args: Prisma.CreditUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditPayload>
+        }
+        aggregate: {
+          args: Prisma.CreditAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCredit>
+        }
+        groupBy: {
+          args: Prisma.CreditGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CreditCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -607,16 +682,28 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const QrScalarFieldEnum = {
   id: 'id',
   kvId: 'kvId',
+  nickname: 'nickname',
   active: 'active',
   redirectLink: 'redirectLink',
   scanCount: 'scanCount',
-  stripePurchaseId: 'stripePurchaseId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId'
+  userId: 'userId',
+  creditId: 'creditId'
 } as const
 
 export type QrScalarFieldEnum = (typeof QrScalarFieldEnum)[keyof typeof QrScalarFieldEnum]
+
+
+export const CreditScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  shopifyOrderId: 'shopifyOrderId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditScalarFieldEnum = (typeof CreditScalarFieldEnum)[keyof typeof CreditScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -772,6 +859,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   qr?: Prisma.QrOmit
+  credit?: Prisma.CreditOmit
 }
 
 /* Types for Logging */

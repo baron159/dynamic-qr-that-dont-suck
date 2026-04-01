@@ -27,3 +27,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type Qr = Prisma.QrModel
+/**
+ * Model Credit
+ * 
+ */
+export type Credit = Prisma.CreditModel

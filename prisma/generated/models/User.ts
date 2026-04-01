@@ -186,7 +186,7 @@ export type UserGroupByOutputType = {
   _max: UserMaxAggregateOutputType | null
 }
 
-type GetUserGroupByPayload<T extends UserGroupByArgs> = Prisma.PrismaPromise<
+export type GetUserGroupByPayload<T extends UserGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<UserGroupByOutputType, T['by']> &
       {
@@ -215,6 +215,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Qr?: Prisma.QrListRelationFilter
+  Credit?: Prisma.CreditListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -228,6 +229,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   Qr?: Prisma.QrOrderByRelationAggregateInput
+  Credit?: Prisma.CreditOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -244,6 +246,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Qr?: Prisma.QrListRelationFilter
+  Credit?: Prisma.CreditListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -287,6 +290,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   Qr?: Prisma.QrCreateNestedManyWithoutUserInput
+  Credit?: Prisma.CreditCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -300,6 +304,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   Qr?: Prisma.QrUncheckedCreateNestedManyWithoutUserInput
+  Credit?: Prisma.CreditUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -313,6 +318,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Qr?: Prisma.QrUpdateManyWithoutUserNestedInput
+  Credit?: Prisma.CreditUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -326,6 +332,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Qr?: Prisma.QrUncheckedUpdateManyWithoutUserNestedInput
+  Credit?: Prisma.CreditUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -431,6 +438,20 @@ export type UserUpdateOneRequiredWithoutQrNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutQrInput, Prisma.UserUpdateWithoutQrInput>, Prisma.UserUncheckedUpdateWithoutQrInput>
 }
 
+export type UserCreateNestedOneWithoutCreditInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreditInput, Prisma.UserUncheckedCreateWithoutCreditInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreditInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreditNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreditInput, Prisma.UserUncheckedCreateWithoutCreditInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreditInput
+  upsert?: Prisma.UserUpsertWithoutCreditInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreditInput, Prisma.UserUpdateWithoutCreditInput>, Prisma.UserUncheckedUpdateWithoutCreditInput>
+}
+
 export type UserCreateWithoutQrInput = {
   id?: string
   email: string
@@ -441,6 +462,7 @@ export type UserCreateWithoutQrInput = {
   monthlySubscription?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  Credit?: Prisma.CreditCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutQrInput = {
@@ -453,6 +475,7 @@ export type UserUncheckedCreateWithoutQrInput = {
   monthlySubscription?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  Credit?: Prisma.CreditUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutQrInput = {
@@ -481,6 +504,7 @@ export type UserUpdateWithoutQrInput = {
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Credit?: Prisma.CreditUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQrInput = {
@@ -493,6 +517,75 @@ export type UserUncheckedUpdateWithoutQrInput = {
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Credit?: Prisma.CreditUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreditInput = {
+  id?: string
+  email: string
+  passHash: string
+  name: string
+  phone?: string | null
+  stripeCustomerId?: string | null
+  monthlySubscription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Qr?: Prisma.QrCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreditInput = {
+  id?: string
+  email: string
+  passHash: string
+  name: string
+  phone?: string | null
+  stripeCustomerId?: string | null
+  monthlySubscription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Qr?: Prisma.QrUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreditInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreditInput, Prisma.UserUncheckedCreateWithoutCreditInput>
+}
+
+export type UserUpsertWithoutCreditInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreditInput, Prisma.UserUncheckedUpdateWithoutCreditInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreditInput, Prisma.UserUncheckedCreateWithoutCreditInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreditInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreditInput, Prisma.UserUncheckedUpdateWithoutCreditInput>
+}
+
+export type UserUpdateWithoutCreditInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Qr?: Prisma.QrUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreditInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Qr?: Prisma.QrUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -502,10 +595,12 @@ export type UserUncheckedUpdateWithoutQrInput = {
 
 export type UserCountOutputType = {
   Qr: number
+  Credit: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Qr?: boolean | UserCountOutputTypeCountQrArgs
+  Credit?: boolean | UserCountOutputTypeCountCreditArgs
 }
 
 /**
@@ -525,6 +620,13 @@ export type UserCountOutputTypeCountQrArgs<ExtArgs extends runtime.Types.Extensi
   where?: Prisma.QrWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreditArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CreditWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -537,6 +639,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   Qr?: boolean | Prisma.User$QrArgs<ExtArgs>
+  Credit?: boolean | Prisma.User$CreditArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -579,6 +682,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passHash" | "name" | "phone" | "stripeCustomerId" | "monthlySubscription" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Qr?: boolean | Prisma.User$QrArgs<ExtArgs>
+  Credit?: boolean | Prisma.User$CreditArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -588,6 +692,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     Qr: Prisma.$QrPayload<ExtArgs>[]
+    Credit: Prisma.$CreditPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -994,6 +1099,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   Qr<T extends Prisma.User$QrArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$QrArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QrPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Credit<T extends Prisma.User$CreditArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$CreditArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CreditPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1444,6 +1550,30 @@ export type User$QrArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   take?: number
   skip?: number
   distinct?: Prisma.QrScalarFieldEnum | Prisma.QrScalarFieldEnum[]
+}
+
+/**
+ * User.Credit
+ */
+export type User$CreditArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Credit
+   */
+  select?: Prisma.CreditSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Credit
+   */
+  omit?: Prisma.CreditOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CreditInclude<ExtArgs> | null
+  where?: Prisma.CreditWhereInput
+  orderBy?: Prisma.CreditOrderByWithRelationInput | Prisma.CreditOrderByWithRelationInput[]
+  cursor?: Prisma.CreditWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CreditScalarFieldEnum | Prisma.CreditScalarFieldEnum[]
 }
 
 /**

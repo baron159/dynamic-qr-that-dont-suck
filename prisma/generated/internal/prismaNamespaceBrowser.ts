@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  Qr: 'Qr'
+  Qr: 'Qr',
+  Credit: 'Credit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -86,16 +87,28 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const QrScalarFieldEnum = {
   id: 'id',
   kvId: 'kvId',
+  nickname: 'nickname',
   active: 'active',
   redirectLink: 'redirectLink',
   scanCount: 'scanCount',
-  stripePurchaseId: 'stripePurchaseId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId'
+  userId: 'userId',
+  creditId: 'creditId'
 } as const
 
 export type QrScalarFieldEnum = (typeof QrScalarFieldEnum)[keyof typeof QrScalarFieldEnum]
+
+
+export const CreditScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  shopifyOrderId: 'shopifyOrderId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditScalarFieldEnum = (typeof CreditScalarFieldEnum)[keyof typeof CreditScalarFieldEnum]
 
 
 export const SortOrder = {

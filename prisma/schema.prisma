@@ -29,6 +29,7 @@ model User {
 model Qr {
   id               String   @id @default(uuid(7))
   kvId             String @unique
+  nickname String @default("QR Dynamics")
   active           Boolean  @default(true)
   redirectLink     String
   scanCount        Int      @default(0)
