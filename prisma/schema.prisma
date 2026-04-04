@@ -48,7 +48,7 @@ model Credit {
   userId String
   shopifyOrderId String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt // This can be removed... it will never be modified
 
   User User @relation(fields: [userId], references: [id])
   Qr Qr[]

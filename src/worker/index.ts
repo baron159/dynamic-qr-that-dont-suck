@@ -6,6 +6,7 @@ import type { JWTPayload } from "hono/utils/jwt/types";
 import type { SignatureKey } from "hono/utils/jwt/jws";
 import type { VerifyOptions } from "hono/utils/jwt/jwt";
 import type { User } from "pc/client";
+import type Stripe from "stripe";
 
 export interface JwtPayload extends JWTPayload {
     userId: string;
@@ -109,17 +110,56 @@ app.post('/api/entry', async c => {
 });
 
 // Route for getting account -- populates the user portal
-// TODO --> Add a update PUT logic
-app.get('/api/auth/info', async c => {
+// TODO --> Add a update PUT logic that updates the user info
+app.on(['get', 'put', 'post'], '/api/auth/info', async c => {
     const payload = c.get('jwtPayload') as JwtPayload;
     const { InitDb } = await import('./util/db.client');
     const client = await InitDb(c.env);
-    const user = await client.user.findUnique({
-        where: { id: payload.userId },
-        omit: { passHash: true, updatedAt: true, createdAt: true }
-    });
-    c.executionCtx.waitUntil(client.$disconnect());
-    return c.json({ user }, 200)
+
+    switch (c.req.method) {
+        case 'GET':
+            const user = await client.user.findUnique({
+                where: { id: payload.userId },
+                omit: { passHash: true, updatedAt: true, createdAt: true },
+                include: {
+                    Qr: true,
+                    _count: {
+                        select: {
+                            Credit: true,
+                            Qr: { where: { active: true } }
+                        }
+                    }
+                }
+            });
+            c.executionCtx.waitUntil(client.$disconnect());
+            return c.json({ user }, 200);
+        case 'POST':
+        case 'PUT':
+            return c.json({ msg: 'noop' }, 201);
+        default:
+            return c.json({ err: 'un-supported method' }, 400);
+    }
+});
+
+// Embedded Checkout for dynamic-credit price (lookup key in Stripe Dashboard)
+app.get('/api/auth/credit/purchase', async (c) => {
+    const { createDynamicCreditCheckoutSession } = await import('./util/stripe.things');
+    const payload = c.get('jwtPayload') as JwtPayload;
+    const qnty = c.req.query('q');
+    try {
+        const checkoutKeys = await createDynamicCreditCheckoutSession(
+            payload.userId,
+            !!qnty ? parseInt(qnty) : 1
+        );
+        if (!checkoutKeys.sessionUrl) {
+            return c.json({ error: 'No session URL' }, 502);
+        }
+        return c.json({url: checkoutKeys.sessionUrl}, 200);
+    } catch (e) {
+        console.error('createDynamicCreditCheckoutSession', e);
+        const msg = e instanceof Error ? e.message : 'Stripe checkout failed';
+        return c.json({ error: msg }, 502);
+    }
 });
 
 // Route for buying new qrs
@@ -151,8 +191,8 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
                 data: {
                     kvId: createId(),
                     redirectLink: body.redirectLink,
-                    stripePurchaseId: body.stripePurchaseId,
-                    userId: payload.userId
+                    userId: payload.userId,
+                    nickname: 'QR Dynamics'
                 }
             });
             c.executionCtx.waitUntil(client.$disconnect());
@@ -200,5 +240,21 @@ app.get("/l/:linkId", async (c) => {
         return c.redirect(qr.redirectLink, 301);
     } else return c.redirect(rl, 301);
 })
+
+app.all('/api/webhooks/stripe', async (c) => {
+    const { verifyWebhookSignature, checkoutCompletedHandler } = await import('./util/stripe.things');
+    const sig = c.req.header('stripe-signature');
+    if (!sig) throw new Error('Stripe signature not found');
+    const body: Stripe.Event = await verifyWebhookSignature(await c.req.raw.text(), sig);
+    switch (body.type) {
+        case 'checkout.session.completed':
+            console.log('checkout session hook hit');
+            c.executionCtx.waitUntil(checkoutCompletedHandler(body.data))
+            break;
+        default:
+            console.warn('UNKNOWN WEBHOOK HIT', body.type);
+    }
+    return c.json({ message: 'Webhook received' }, 200);
+});
 
 export default app;

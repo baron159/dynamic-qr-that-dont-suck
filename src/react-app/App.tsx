@@ -12,15 +12,16 @@ import PrivateRoute from "./componets/private.route";
 import EntryPage from "./pages/EntryPage";
 import { Dashboard } from "./pages/Dashboard";
 import Landing from "./pages/Landing.tsx";
+import Header from "./header.tsx";
 
 function App() {
 
 
     return (
         <>
-            <AppShell header={{ height: 56, offset: true }}>
+            <AppShell header={{ height: 48, offset: true }}>
                 <AppShell.Header>
-                    Better QR
+                    <Header />
                 </AppShell.Header>
                 <AppShell.Main style={{ minHeight: 'calc(100vh - 64px)' }}>
                     <Switch>

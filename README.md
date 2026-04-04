@@ -4,6 +4,9 @@
 Doc links for later:
 `https://qr-code-styling.com`
 
+Icon provider
+`https://phosphoricons.com`
+
 TODO
 ---
 

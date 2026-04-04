@@ -5,6 +5,11 @@ JWT_SECRET="FILL"
 APP_HOST="https://dev.baron.solutions"
 CUID_SEED="FILL"
 
+# Stripe Things
+STRIPE_PUB_KEY="GET FROM STRIPE"
+STRIPE_SECRET="GET FROM STRIPE"
+STRIPE_WHSEC="GET FROM STRIPE"
+
 # This was inserted by `prisma init`:
 # Environment variables declared in this file are NOT automatically loaded by Prisma.
 # Please add `import "dotenv/config";` to your `prisma.config.ts` file, or use the Prisma CLI with Bun
