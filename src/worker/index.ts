@@ -100,11 +100,6 @@ app.post('/api/entry', async c => {
         token,
         user: {
             id: user.id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            stripeCustomerId: !!user.stripeCustomerId,
-            monthlySubscription: !!user.monthlySubscription
         }
     })
 });
@@ -120,13 +115,12 @@ app.on(['get', 'put', 'post'], '/api/auth/info', async c => {
         case 'GET':
             const user = await client.user.findUnique({
                 where: { id: payload.userId },
-                omit: { passHash: true, updatedAt: true, createdAt: true },
+                omit: { passHash: true, createdAt: true },
                 include: {
                     Qr: true,
                     _count: {
                         select: {
-                            Credit: true,
-                            Qr: { where: { active: true } }
+                            Credit: true
                         }
                     }
                 }
