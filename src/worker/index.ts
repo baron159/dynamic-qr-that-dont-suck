@@ -129,7 +129,7 @@ app.on(['get', 'put', 'post'], '/api/auth/info', async c => {
             return c.json({ user }, 200);
         case 'POST':
         case 'PUT':
-            return c.json({ msg: 'noop' }, 201);
+            return c.json({ msg: 'noop' }, 401);
         default:
             return c.json({ err: 'un-supported method' }, 400);
     }
