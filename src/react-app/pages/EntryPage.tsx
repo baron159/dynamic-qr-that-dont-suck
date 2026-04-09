@@ -20,14 +20,20 @@ export default function EntryPage() {
     
     const handleSubmit = async () => {
         setLoading(true);
-        if (inCreateMode) {
-            if (password !== confirmPassword) {
-                setError('Passwords do not match');
-                return;
+        try {
+            if (inCreateMode) {
+                if (password !== confirmPassword) {
+                    setError('Passwords do not match');
+                    return;
+                }
+                await signup({ email, password, name, phone });
+            } else {
+                await signin({ email, password });
             }
-            await signup({ email, password, name, phone });
-        } else {
-            await signin({ email, password });
+        } catch (error) {
+            console.warn(error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -46,7 +52,13 @@ export default function EntryPage() {
                 )}
                 {error && <Text color="red" ta="center">{error}</Text>}
                 <Group justify="space-between">
-                    <Button onClick={handleSubmit} loading={loading}>{inCreateMode ? 'Create Account' : 'Sign In'}</Button>
+                    <Button 
+                        onClick={handleSubmit} 
+                        loading={loading}
+                        disabled={email === '' || password === ''}
+                        >
+                            {inCreateMode ? 'Create Account' : 'Sign In'}
+                        </Button>
                     <Button onClick={() => setInCreateMode(!inCreateMode)} variant={'subtle'}>{inCreateMode ? 'Have an account?' : 'Get an account'}</Button>
                 </Group>
             </Stack>

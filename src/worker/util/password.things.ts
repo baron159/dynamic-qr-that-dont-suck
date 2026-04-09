@@ -76,10 +76,16 @@ export function newPasswordHash(password: string): PasswordString {
  * @returns true if the password is correct, false otherwise
  */
 export function verifyPassword(password: string, storedHash: PasswordString): boolean {
-  const { salt, passwordHash } = PasswordSchema.parse(storedHash);
-  const saltBytes = toUint8(salt);
-  const h = toHex(scrypt(password, saltBytes, { N: 2 ** 16, r: 8, p: 1 }));
-  return h === passwordHash;
+  try {
+    const { salt, passwordHash } = PasswordSchema.parse(storedHash);
+    const saltBytes = toUint8(salt);
+    const h = toHex(scrypt(password, saltBytes, { N: 2 ** 16, r: 8, p: 1 }));
+    return h === passwordHash;
+  } catch (error) {
+    console.log('caught a baddd');
+    return false
+  }
+  
 }
 
 // export type MagicToken = string;

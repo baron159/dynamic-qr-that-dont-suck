@@ -9,7 +9,8 @@ export type UserFront = Omit<User, "passHash" | "createdAt">;
 export type InfoRes = UserFront & { Qr: Qr[], _count:{ Credit: number }};
 // Function param types
 type UserUpdateParams = Partial<Pick<UserFront, 'name' | 'phone'>>;
-type QrUpdateParams = Partial<Pick<Qr, 'nickname' | 'redirectLink' | 'active'>>
+export type QrUpdateParams = Partial<Pick<Qr, 'nickname' | 'redirectLink' | 'active' | 'options'>>;
+
 const INFO_EP = '/api/auth/info' as const;
 const QR_EP = '/api/auth/qr' as const;
 
@@ -24,7 +25,7 @@ export interface InfoContextType {
     // Helper functions
     updateUser: (up: UserUpdateParams) => Promise<void>
     updateQr: (qi: string, qp: QrUpdateParams) => Promise<boolean>
-    createQr: (redirectLink: string, nickname?: string) => Promise<void>
+    createQr: (redirectLink: string, nickname?: string) => Promise<Qr | null>
     infoReload: () => Promise<void>
     changeQrStatus: (id: string, status: boolean) => Promise<void>
 }
@@ -63,7 +64,8 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             id: b.id
         });
         setOwnedCredits(b._count.Credit);
-        setUsedCredits(b.Qr.length);
+        const activeQr = b.Qr.filter(q => q.active);
+        setUsedCredits(activeQr.length);
         setMonthly(!!b.monthlySubscription);
         listHandlers.setState(b.Qr);
     };
@@ -212,15 +214,20 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 title: 'Failed to Create',
                 message,
                 withBorder: true,
-                style: { backgroundColor: 'red' },
+                color: 'red'
             });
             setBusy(false);
-            return;
+            return null;
         } else {
             const qrBody = await res.json() as {qr: Qr};
             listHandlers.append(qrBody.qr);
             setBusy(false);
-            return;
+            notifications.show({
+                message:"New Dynamic QR code created!",
+                withBorder: true,
+            });
+
+            return qrBody.qr;
         }
     };
 

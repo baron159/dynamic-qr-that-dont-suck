@@ -20,6 +20,8 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import type{ Qr } from "pc/browser.ts";
+import type{ QrUpdateParams } from '../contexts/info.ctx.tsx';
 
 type DotType = "square" | "dots" | "rounded" | "extra-rounded" | "classy" | "classy-rounded";
 type CornerSquareType = DotType | "dot";
@@ -161,15 +163,20 @@ export interface QrEditorProps {
     disableQrTuningOptions?: boolean;
     disableImgOptions?: boolean;
     disableImage?: boolean;
+    qrObj?: Qr;
+    onSave?: (qp: QrUpdateParams) => Promise<boolean>;
 }
 
-export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false }: QrEditorProps) {
+export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined }: QrEditorProps) {
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Data
-  const [data, setData] = useState("https://example.com");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  // Basic Data
+  const [data, setData] = useState("https://example.com"); // THIS IS OUR Origin, and CANT be changed
+  const [sendTo, setSendTo] = useState("YourSite"); // This is their data
+  const [nickname, setNickname] = useState('');
+  const [activated, setActivated] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);  //
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
 
   // Dimensions
@@ -202,6 +209,24 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   const [mode, setMode] = useState<QRMode>("Byte");
   const [errorCorrection, setErrorCorrection] = useState<ErrorCorrectionLevel>("Q");
 
+  // Initalization with qrObj
+  useEffect(() => {
+    if(!qrObj) return; // THIS MAY NEED TO SET DEFAULTS FOR THINGS
+    setNickname(qrObj.nickname);
+    setActivated(qrObj.active);
+    setData(qrObj.kvId);
+    const bb = qrObj.options as Omit<Options, 'nodeCanvas' | 'jsDom'>;
+    // FIGURE OUT HOW TO HANDLE THE URL SO ITS NOT CONFUSING
+    setWidth(bb.width as number);
+    setHeight(bb.height as number);
+    setMargin(bb.margin as number);
+    // Dots
+    setDotType(bb.dotsOptions?.type as DotType);
+    setDotsColor(bb.dotsOptions)
+
+
+  }, [qrObj])
+
   // Handle image file changes
   useEffect(() => {
     if (imageFile) {
@@ -217,8 +242,10 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
       width,
       height,
       margin,
-      data,
+      data,  // will match url in kvId
       image: imageUrl,
+      shape: 'square', // This opt currently has no controller
+      type: 'canvas',  // This opt currently has no controller
       dotsOptions: { type: dotType, ...buildColorOptions(dotsColor) },
       cornersSquareOptions: {
         ...(cornerSquareType ? { type: cornerSquareType as CornerSquareType } : {}),
@@ -277,7 +304,11 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
       <Grid gutter="lg">
         {/* Controls Column */}
         <Grid.Col span={{ base: 12, md: 7 }}>
-          <Accordion multiple defaultValue={["data", "dots"]}>
+        <Title order={4}>Basic</Title>
+          <Button onClick={() => {
+            console.log('This is what we get with buildOption\n', buildOptions());
+          }}>Testing</Button>
+          <Accordion multiple defaultValue={["dots"]}>
             {/* Data Section */}
             <Accordion.Item value="data">
               <Accordion.Control>Data</Accordion.Control>

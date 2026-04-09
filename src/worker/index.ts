@@ -71,7 +71,7 @@ app.post('/api/entry', async c => {
         // Provoked signup but missing name
         return c.json({ error: 'Name is required' }, 400);
     } else {
-        // Normal signup
+        // Normal signin
         user = await client.user.findUnique({
             where: {
                 email: body.email
@@ -183,7 +183,7 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
             const { createId } = await import('./util/ids');
             const qr = await client.qr.create({
                 data: {
-                    kvId: createId(),
+                    kvId: `${c.env.APP_HOST}/l/${createId()}`,
                     redirectLink: body.redirectLink,
                     userId: payload.userId,
                     nickname: 'QR Dynamics'
@@ -218,20 +218,22 @@ app.get("/l/:linkId", async (c) => {
     const kvid = c.req.param('linkId');
     const rl = await c.env.KV.get(kvid, 'text');
     if (!rl) {
-        const { InitDb } = await import('./util/db.client');
-        const client = await InitDb(c.env);
-        const qr = await client.qr.findFirst({
-            where: { kvId: kvid, active: true },
-        });
-        if (!qr) {
-            return c.text("unknown", 404);
-        }
-        c.executionCtx.waitUntil(client.$disconnect());
-        const putIntoKv = async () => {
-            await c.env.KV.put(kvid, qr.redirectLink!, { expirationTtl: 30 });
-        }
-        c.executionCtx.waitUntil(putIntoKv());
-        return c.redirect(qr.redirectLink, 301);
+        return c.text('deactivated or unknown location', 404);
+        // KV is persistant enough that we can rely on it soley
+        // const { InitDb } = await import('./util/db.client');
+        // const client = await InitDb(c.env);
+        // const qr = await client.qr.findFirst({
+        //     where: { kvId: kvid, active: true },
+        // });
+        // if (!qr) {
+        //     return c.text("unknown", 404);
+        // }
+        // c.executionCtx.waitUntil(client.$disconnect());
+        // const putIntoKv = async () => {
+        //     await c.env.KV.put(kvid, qr.redirectLink!, { expirationTtl: 30 });
+        // }
+        // c.executionCtx.waitUntil(putIntoKv());
+        // return c.redirect(qr.redirectLink, 301);
     } else return c.redirect(rl, 301);
 })
 

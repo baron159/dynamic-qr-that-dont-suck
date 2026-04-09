@@ -13,8 +13,8 @@ datasource db {
 }
 
 model User {
-  id                  String  @id @default(cuid(2))
-  email               String  @unique
+  id                  String   @id @default(cuid(2))
+  email               String   @unique
   passHash            String
   name                String
   phone               String?
@@ -22,34 +22,36 @@ model User {
   monthlySubscription String? // Users can have
   Qr                  Qr[]
   Credit              Credit[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model Qr {
-  id               String   @id @default(uuid(7))
-  kvId             String @unique
-  nickname String @default("QR Dynamics")
-  active           Boolean  @default(true)
-  redirectLink     String
-  scanCount        Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id           String   @id @default(uuid(7))
+  // The full url that the QR is pointing to
+  kvId         String   @unique
+  nickname     String   @default("QR Dynamics")
+  active       Boolean  @default(false)
+  redirectLink String
+  scanCount    Int      @default(0)
+  options      Json? // == QRCodeStyling minus the 'data'
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  User   User   @relation(fields: [userId], references: [id])
-  Credit Credit? @relation(fields: [creditId], references: [id])
-  userId String
+  User     User    @relation(fields: [userId], references: [id])
+  Credit   Credit? @relation(fields: [creditId], references: [id])
+  userId   String
   creditId String? // Optional because a subscription QR doesn't have a credit
 }
 
 // Credits are one-time purchased credits that can be used to create QR codes
 model Credit {
-  id String @id @default(uuid(7))
-  userId String
+  id             String   @id @default(uuid(7))
+  userId         String
   shopifyOrderId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt // This can be removed... it will never be modified
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt // This can be removed... it will never be modified
 
   User User @relation(fields: [userId], references: [id])
-  Qr Qr[]
+  Qr   Qr[]
 }

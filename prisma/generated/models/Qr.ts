@@ -67,6 +67,7 @@ export type QrCountAggregateOutputType = {
   active: number
   redirectLink: number
   scanCount: number
+  options: number
   createdAt: number
   updatedAt: number
   userId: number
@@ -116,6 +117,7 @@ export type QrCountAggregateInputType = {
   active?: true
   redirectLink?: true
   scanCount?: true
+  options?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
@@ -216,6 +218,7 @@ export type QrGroupByOutputType = {
   active: boolean
   redirectLink: string
   scanCount: number
+  options: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   userId: string
@@ -252,6 +255,7 @@ export type QrWhereInput = {
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
+  options?: Prisma.JsonNullableFilter<"Qr">
   createdAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
@@ -267,6 +271,7 @@ export type QrOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
+  options?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -285,6 +290,7 @@ export type QrWhereUniqueInput = Prisma.AtLeast<{
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
+  options?: Prisma.JsonNullableFilter<"Qr">
   createdAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
@@ -300,6 +306,7 @@ export type QrOrderByWithAggregationInput = {
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
+  options?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -321,6 +328,7 @@ export type QrScalarWhereWithAggregatesInput = {
   active?: Prisma.BoolWithAggregatesFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringWithAggregatesFilter<"Qr"> | string
   scanCount?: Prisma.IntWithAggregatesFilter<"Qr"> | number
+  options?: Prisma.JsonNullableWithAggregatesFilter<"Qr">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Qr"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Qr"> | string
@@ -330,10 +338,11 @@ export type QrScalarWhereWithAggregatesInput = {
 export type QrCreateInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   User: Prisma.UserCreateNestedOneWithoutQrInput
@@ -343,10 +352,11 @@ export type QrCreateInput = {
 export type QrUncheckedCreateInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -360,6 +370,7 @@ export type QrUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   User?: Prisma.UserUpdateOneRequiredWithoutQrNestedInput
@@ -373,6 +384,7 @@ export type QrUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -382,10 +394,11 @@ export type QrUncheckedUpdateInput = {
 export type QrCreateManyInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -399,6 +412,7 @@ export type QrUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -410,6 +424,7 @@ export type QrUncheckedUpdateManyInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -433,6 +448,7 @@ export type QrCountOrderByAggregateInput = {
   active?: Prisma.SortOrder
   redirectLink?: Prisma.SortOrder
   scanCount?: Prisma.SortOrder
+  options?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -572,10 +588,11 @@ export type QrUncheckedUpdateManyWithoutCreditNestedInput = {
 export type QrCreateWithoutUserInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   Credit?: Prisma.CreditCreateNestedOneWithoutQrInput
@@ -584,10 +601,11 @@ export type QrCreateWithoutUserInput = {
 export type QrUncheckedCreateWithoutUserInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   creditId?: string | null
@@ -628,6 +646,7 @@ export type QrScalarWhereInput = {
   active?: Prisma.BoolFilter<"Qr"> | boolean
   redirectLink?: Prisma.StringFilter<"Qr"> | string
   scanCount?: Prisma.IntFilter<"Qr"> | number
+  options?: Prisma.JsonNullableFilter<"Qr">
   createdAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Qr"> | Date | string
   userId?: Prisma.StringFilter<"Qr"> | string
@@ -637,10 +656,11 @@ export type QrScalarWhereInput = {
 export type QrCreateWithoutCreditInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   User: Prisma.UserCreateNestedOneWithoutQrInput
@@ -649,10 +669,11 @@ export type QrCreateWithoutCreditInput = {
 export type QrUncheckedCreateWithoutCreditInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -686,10 +707,11 @@ export type QrUpdateManyWithWhereWithoutCreditInput = {
 export type QrCreateManyUserInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   creditId?: string | null
@@ -702,6 +724,7 @@ export type QrUpdateWithoutUserInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Credit?: Prisma.CreditUpdateOneWithoutQrNestedInput
@@ -714,6 +737,7 @@ export type QrUncheckedUpdateWithoutUserInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creditId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -726,6 +750,7 @@ export type QrUncheckedUpdateManyWithoutUserInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creditId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -734,10 +759,11 @@ export type QrUncheckedUpdateManyWithoutUserInput = {
 export type QrCreateManyCreditInput = {
   id?: string
   kvId: string
-  nickname: string
+  nickname?: string
   active?: boolean
   redirectLink: string
   scanCount?: number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -750,6 +776,7 @@ export type QrUpdateWithoutCreditInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   User?: Prisma.UserUpdateOneRequiredWithoutQrNestedInput
@@ -762,6 +789,7 @@ export type QrUncheckedUpdateWithoutCreditInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -774,6 +802,7 @@ export type QrUncheckedUpdateManyWithoutCreditInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   redirectLink?: Prisma.StringFieldUpdateOperationsInput | string
   scanCount?: Prisma.IntFieldUpdateOperationsInput | number
+  options?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -788,6 +817,7 @@ export type QrSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
+  options?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
@@ -803,6 +833,7 @@ export type QrSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
+  options?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
@@ -818,6 +849,7 @@ export type QrSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
+  options?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
@@ -833,13 +865,14 @@ export type QrSelectScalar = {
   active?: boolean
   redirectLink?: boolean
   scanCount?: boolean
+  options?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
   creditId?: boolean
 }
 
-export type QrOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kvId" | "nickname" | "active" | "redirectLink" | "scanCount" | "createdAt" | "updatedAt" | "userId" | "creditId", ExtArgs["result"]["qr"]>
+export type QrOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kvId" | "nickname" | "active" | "redirectLink" | "scanCount" | "options" | "createdAt" | "updatedAt" | "userId" | "creditId", ExtArgs["result"]["qr"]>
 export type QrInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Credit?: boolean | Prisma.Qr$CreditArgs<ExtArgs>
@@ -866,6 +899,7 @@ export type $QrPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     active: boolean
     redirectLink: string
     scanCount: number
+    options: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
     userId: string
@@ -1301,6 +1335,7 @@ export interface QrFieldRefs {
   readonly active: Prisma.FieldRef<"Qr", 'Boolean'>
   readonly redirectLink: Prisma.FieldRef<"Qr", 'String'>
   readonly scanCount: Prisma.FieldRef<"Qr", 'Int'>
+  readonly options: Prisma.FieldRef<"Qr", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Qr", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Qr", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Qr", 'String'>
