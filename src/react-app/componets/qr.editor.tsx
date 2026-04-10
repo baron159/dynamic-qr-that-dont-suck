@@ -20,8 +20,8 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import type{ Qr } from "pc/browser.ts";
-import type{ QrUpdateParams } from '../contexts/info.ctx.tsx';
+import type { Qr } from "pc/browser.ts";
+import type { QrUpdateParams } from '../contexts/info.ctx.tsx';
 
 type DotType = "square" | "dots" | "rounded" | "extra-rounded" | "classy" | "classy-rounded";
 type CornerSquareType = DotType | "dot";
@@ -160,11 +160,11 @@ function ColorGradientControls({
 }
 
 export interface QrEditorProps {
-    disableQrTuningOptions?: boolean;
-    disableImgOptions?: boolean;
-    disableImage?: boolean;
-    qrObj?: Qr;
-    onSave?: (qp: QrUpdateParams) => Promise<boolean>;
+  disableQrTuningOptions?: boolean;
+  disableImgOptions?: boolean;
+  disableImage?: boolean;
+  qrObj?: Qr;
+  onSave?: (qp: QrUpdateParams) => Promise<boolean>;
 }
 
 export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined }: QrEditorProps) {
@@ -173,7 +173,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
 
   // Basic Data
   const [data, setData] = useState("https://example.com"); // THIS IS OUR Origin, and CANT be changed
-  const [sendTo, setSendTo] = useState("YourSite"); // This is their data
+  const [sendTo, setSendTo] = useState("https://example.com"); // This is their data
   const [nickname, setNickname] = useState('');
   const [activated, setActivated] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);  //
@@ -211,19 +211,52 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
 
   // Initalization with qrObj
   useEffect(() => {
-    if(!qrObj) return; // THIS MAY NEED TO SET DEFAULTS FOR THINGS
-    setNickname(qrObj.nickname);
-    setActivated(qrObj.active);
+    if (!qrObj) return; // THIS MAY NEED TO SET DEFAULTS FOR THINGS
+    setNickname(qrObj.nickname || '');
+    setActivated(qrObj.active || false);
     setData(qrObj.kvId);
+    setSendTo(qrObj.redirectLink);
     const bb = qrObj.options as Omit<Options, 'nodeCanvas' | 'jsDom'>;
     // FIGURE OUT HOW TO HANDLE THE URL SO ITS NOT CONFUSING
-    setWidth(bb.width as number);
-    setHeight(bb.height as number);
-    setMargin(bb.margin as number);
+    setWidth(bb?.width as number || 300);
+    setHeight(bb?.height as number || 300);
+    setMargin(bb?.margin as number || 10);
     // Dots
-    setDotType(bb.dotsOptions?.type as DotType);
-    setDotsColor(bb.dotsOptions)
+    setDotType(bb?.dotsOptions?.type as DotType || 'square');
+    // @ts-ignore
+    if (!!bb && 'gradient' in bb.dotsOptions!) bb.dotsOptions.gradient['enabled'] = true;
+    // @ts-ignore
+    setDotsColor(!!bb ? buildColorOptions(bb?.dotsOptions) : defaultColor('#000000'));
 
+    // Corners Square
+    setCornerSquareType(bb?.cornersSquareOptions?.type || '');
+    // @ts-ignore
+    if (!!bb && 'gradient' in bb.cornersSquareOptions!) bb.cornersSquareOptions!.gradient['enabled'] = true;
+    // @ts-ignore
+    setCornersSquareColor(!!bb ? buildColorOptions(bb?.cornersSquareOptions) : defaultColor('#000000'));
+
+    // Corner Dot
+    setCornerDotType(bb?.cornersDotOptions?.type || '');
+    // @ts-ignore
+    if (!!bb && 'gradient' in bb.cornersDotOptions) bb.cornersDotOptions.gradient['enabled'] = true;
+    // @ts-ignore
+    setCornersDotColor(!!bb ? buildColorOptions(bb?.cornersDotOptions) : defaultColor('#000000'));
+
+    // Background
+    //@ts-ignore
+    if (!!bb && 'gradient' in bb.backgroundOptions) bb.backgroundOptions.gradient['enabled'] = true;
+    // @ts-ignore
+    setBgColor(!!bb ? buildColorOptions(bb?.backgroundOptions) : defaultColor('#ffffff'));
+
+    // Image Options
+    setHideBackgroundDots(bb?.imageOptions?.hideBackgroundDots || true);
+    setImageSize(bb?.imageOptions?.imageSize || 0.4);
+    setImageMargin(bb?.imageOptions?.margin || 0);
+
+    // QR Options
+    setTypeNumber(bb?.qrOptions?.typeNumber || 0);
+    setMode(bb?.qrOptions?.mode || "Byte");
+    setErrorCorrection(bb?.qrOptions?.errorCorrectionLevel || "Q");
 
   }, [qrObj])
 
@@ -304,13 +337,34 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
       <Grid gutter="lg">
         {/* Controls Column */}
         <Grid.Col span={{ base: 12, md: 7 }}>
-        <Title order={4}>Basic</Title>
+          <Title order={4}>Basic</Title>
+          <Stack gap={8}>
+            <TextInput
+              label="Nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.currentTarget.value)}
+              placeholder="My Site"
+            />
+            <TextInput
+              label="URL"
+              value={sendTo}
+              onChange={(e) => setSendTo(e.currentTarget.value)}
+              placeholder="https://example.com"
+            />
+            <Switch
+              label="Activated"
+              size="lg"
+              checked={activated}
+              onChange={(e) => setActivated(e.currentTarget.checked)}
+            />
+          </Stack>
+
           <Button onClick={() => {
             console.log('This is what we get with buildOption\n', buildOptions());
           }}>Testing</Button>
           <Accordion multiple defaultValue={["dots"]}>
             {/* Data Section */}
-            <Accordion.Item value="data">
+            {/* <Accordion.Item value="data">
               <Accordion.Control>Data</Accordion.Control>
               <Accordion.Panel>
                 <Stack gap="sm">
@@ -331,7 +385,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
                   />
                 </Stack>
               </Accordion.Panel>
-            </Accordion.Item>
+            </Accordion.Item> */}
 
             {/* Dimensions */}
             <Accordion.Item value="dimensions">

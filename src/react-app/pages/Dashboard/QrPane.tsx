@@ -49,7 +49,7 @@ export function QrPane() {
             const temp = new URL(q.redirectLink);
             firstLine = temp.hostname;
         }
-        return (<><Group justify='space-between'>
+        return (<><Group justify='space-between' wrap='nowrap'>
             <Stack gap={0} align="start" ta={'start'}>
                 <Text size='lg'>{firstLine}</Text>
                 <Text size='md' c='dimmed'>{q.redirectLink}</Text>
@@ -93,7 +93,7 @@ export function QrPane() {
             <Divider h='100%' size={'lg'} orientation="vertical" />
         </Grid.Col>
         <Grid.Col span={8}>
-            {selectedQr ? <QrEditor /> : createNewQr()}
+            {selectedQr ? <QrEditor qrObj={selectedQr} /> : createNewQr()}
 
         </Grid.Col>
     </Grid>)
