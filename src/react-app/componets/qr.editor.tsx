@@ -11,6 +11,7 @@ import {
   Group,
   NumberInput,
   Paper,
+  Popover,
   SegmentedControl,
   Select,
   Slider,
@@ -22,6 +23,7 @@ import {
 } from "@mantine/core";
 import type { Qr } from "pc/browser.ts";
 import type { QrUpdateParams } from '../contexts/info.ctx.tsx';
+import { InfoIcon } from '@phosphor-icons/react';
 
 type DotType = "square" | "dots" | "rounded" | "extra-rounded" | "classy" | "classy-rounded";
 type CornerSquareType = DotType | "dot";
@@ -167,7 +169,7 @@ export interface QrEditorProps {
   onSave?: (qp: QrUpdateParams) => Promise<boolean>;
 }
 
-export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined }: QrEditorProps) {
+export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined, onSave }: QrEditorProps) {
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -351,12 +353,33 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
               onChange={(e) => setSendTo(e.currentTarget.value)}
               placeholder="https://example.com"
             />
-            <Switch
-              label="Activated"
-              size="lg"
-              checked={activated}
-              onChange={(e) => setActivated(e.currentTarget.checked)}
-            />
+            <Text size="1.1rem">Activation Status</Text>
+
+            <Group justify="space-between">
+              <Switch
+                label={`is ${activated ? 'active' : 'deactive'}`}
+                size="lg"
+                checked={activated}
+                onChange={(e) => {
+                  if(!!onSave) {
+                    // @ts-ignore
+                    onSave({id: qrObj!.id as string})
+                  }
+                  setActivated(e.currentTarget.checked);
+                }}
+              />
+              <Popover withArrow width={350}>
+                <Popover.Target><InfoIcon size={32} weight="duotone" /></Popover.Target>
+                <Popover.Dropdown>
+                  <Text>
+                    An active QR will consume a credit and enable the location you provided above. Taking users that scan your QR to the route. Make sure your route
+                    is valid otherwise users will see a 404 error. Scanning a deactivated QR will also result in a 404. Deactivating the QR will free up the credit,
+                    allowing you to activate a different QR code.
+                  </Text>
+                </Popover.Dropdown>
+              </Popover>
+            </Group>
+
           </Stack>
 
           <Button onClick={() => {

@@ -7,6 +7,7 @@ import type { SignatureKey } from "hono/utils/jwt/jws";
 import type { VerifyOptions } from "hono/utils/jwt/jwt";
 import type { User } from "pc/client";
 import type Stripe from "stripe";
+import type { QrUncheckedUpdateInput } from "pc/models";
 
 export interface JwtPayload extends JWTPayload {
     userId: string;
@@ -192,13 +193,33 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
             c.executionCtx.waitUntil(client.$disconnect());
             return c.json({ qr }, 200);
         case 'PUT':
-            const b = await c.req.json() as { redirectLink: string, id: string };
-            const updatedQr = await client.qr.update({
-                where: { id: b.id },
-                data: {
-                    redirectLink: b.redirectLink
+            const b = await c.req.json() as QrUncheckedUpdateInput;
+            if('kvId' in b) return c.json({msg: 'You can not change the kvId once created'}, 400);
+            else if(!b.id) return c.json({msg: 'an id is required to update, but not present'}, 400);
+            const cqr = await client.qr.findUniqueOrThrow({ where: { id: b.id as string }, select: { active: true}});
+            // Check if the active status is changing. And if it is, then check things
+            if('active' in b && !cqr.active && !!b.active){
+                const creditInfo = await client.user.findUniqueOrThrow({where: {id: payload.userId}, select:{ _count: {
+                    select: {
+                        Qr: {where: {active: true, NOT: {id: b.id as string}}},
+                        Credit: true
+                    }
+                }}});
+                if(creditInfo._count.Qr >= creditInfo._count.Credit ){
+                    // trying to change the active status, but lacking credit to do so
+                    return c.json({msg: "lacking credit. Unable to activate"}, 400);
                 }
+            }
+            const updatedQr = await client.qr.update({
+                where: { id: b.id as string },
+                data: {...b}
             });
+            const kvParts = updatedQr.kvId.split('/');
+            if(updatedQr.active){
+                await c.env.KV.put(kvParts[kvParts.length -1], updatedQr.redirectLink);
+            } else {
+                await c.env.KV.delete(kvParts[kvParts.length -1])
+            }
             c.executionCtx.waitUntil(client.$disconnect());
             return c.json({ qr: updatedQr }, 200);
     }
