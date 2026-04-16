@@ -27,7 +27,7 @@ export interface InfoContextType {
     updateQr: (qi: string, qp: QrUpdateParams) => Promise<boolean>
     createQr: (redirectLink: string, nickname?: string) => Promise<Qr | null>
     infoReload: () => Promise<void>
-    changeQrStatus: (id: string, status: boolean) => Promise<void>
+    changeQrStatus: (id: string, status: boolean) => Promise<boolean>
 }
 
 const InfoContext = createContext<InfoContextType | undefined>(undefined);
@@ -108,7 +108,7 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 title: 'Uh-oh QR update failed',
                 message: 'There is no QR code found with the ID given',
                 withBorder: true,
-                style: { backgroundColor: 'red' },
+                color: 'red',
             })
             setBusy(false);
             return false;
@@ -129,15 +129,17 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 title: 'Uh-oh QR update failed',
                 message,
                 withBorder: true,
-                style: { backgroundColor: 'red' },
+                color: 'red',
             });
             setBusy(false);
             return false;
         }
+        const resBdy = await res.json() as { qr: Qr, activeCount: number }
         listHandlers.applyWhere(
             (q) => q.id === id,
             (q) => ({...q, ...qp})
         );
+        setUsedCredits(resBdy.activeCount);
         showSuccessNotify && notifications.show({
             title: 'QR updated!',
             message: 'Your QR setting have been saved!',
@@ -150,7 +152,8 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     /**
      * Change a QR active status
      * @param id of the QR
-     * @param status 
+     * @param status What status to set
+     * @returns true -or- false based on if the Request returned with success
      */
     const changeQrStatus = async (id: string, status: boolean) => {
         const changing = qrList.filter(q => q.id === id)[0];
@@ -159,17 +162,17 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                 title: 'Ummm',
                 message: 'QR is already in the requested status',
                 withBorder: true,
-                style: { backgroundColor: 'orange' },
+                color: 'orange',
             });
-            return;
+            return true; // Technically true
         } else if(!changing){
             notifications.show({
                 title: 'Ummm',
                 message: 'QR can not be found',
                 withBorder: true,
-                style: { backgroundColor: 'red' },
+                color: 'red',
             });
-            return;
+            return false; // This is a bigger problem, but shouldn't happen
         }
         setBusy(true);
         // If the status is true, do some checks
@@ -180,10 +183,10 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
                     title: ':( QR activation Failed',
                     message: 'You already have the maxed codes active. Buy another credit, or deactivate another QR',
                     withBorder: true,
-                    style: { backgroundColor: 'red' },
+                    color: 'red',
                 });
                 setBusy(false);
-                return;
+                return false;
             }
         }
         const updateResult = await updateQr(id, {active: status}, false);
@@ -191,7 +194,7 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             message: `QR has been: ${status ? 'Activated' : 'Deactivated'}`,
             withBorder: true,
         });
-        return;
+        return true;
     };
 
     /**
@@ -219,8 +222,9 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             setBusy(false);
             return null;
         } else {
-            const qrBody = await res.json() as {qr: Qr};
+            const qrBody = await res.json() as {qr: Qr, activeCount: number};
             listHandlers.append(qrBody.qr);
+            setUsedCredits(qrBody.activeCount);
             setBusy(false);
             notifications.show({
                 message:"New Dynamic QR code created!",

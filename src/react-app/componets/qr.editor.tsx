@@ -22,8 +22,8 @@ import {
   Title,
 } from "@mantine/core";
 import type { Qr } from "pc/browser.ts";
-import type { QrUpdateParams } from '../contexts/info.ctx.tsx';
-import { InfoIcon } from '@phosphor-icons/react';
+import { useInfo } from '../contexts/info.ctx.tsx';
+import { InfoIcon, FloppyDiskBackIcon } from '@phosphor-icons/react';
 
 type DotType = "square" | "dots" | "rounded" | "extra-rounded" | "classy" | "classy-rounded";
 type CornerSquareType = DotType | "dot";
@@ -166,12 +166,12 @@ export interface QrEditorProps {
   disableImgOptions?: boolean;
   disableImage?: boolean;
   qrObj?: Qr;
-  onSave?: (qp: QrUpdateParams) => Promise<boolean>;
 }
 
-export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined, onSave }: QrEditorProps) {
+export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined }: QrEditorProps) {
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { changeQrStatus, updateQr } = useInfo();
 
   // Basic Data
   const [data, setData] = useState("https://example.com"); // THIS IS OUR Origin, and CANT be changed
@@ -211,11 +211,16 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   const [mode, setMode] = useState<QRMode>("Byte");
   const [errorCorrection, setErrorCorrection] = useState<ErrorCorrectionLevel>("Q");
 
+  // UI State things
+  const whoManipulatedActivation = useRef<'none' | 'effect' | 'user'>('none');
+
   // Initalization with qrObj
   useEffect(() => {
     if (!qrObj) return; // THIS MAY NEED TO SET DEFAULTS FOR THINGS
+    // Set QR object things
     setNickname(qrObj.nickname || '');
     setActivated(qrObj.active || false);
+    whoManipulatedActivation.current = 'effect';
     setData(qrObj.kvId);
     setSendTo(qrObj.redirectLink);
     const bb = qrObj.options as Omit<Options, 'nodeCanvas' | 'jsDom'>;
@@ -322,6 +327,22 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if(whoManipulatedActivation.current !== 'user') return;
+    else if(!qrObj) return;
+    changeQrStatus(qrObj.id, activated)
+      .then(rtn => {
+        if(!rtn){
+          whoManipulatedActivation.current = 'effect';
+          setActivated(prev => !prev); // Change failed. Flip the state.
+        }
+      })
+      .catch(r => {
+        whoManipulatedActivation.current = 'effect';
+        setActivated(prev => !prev); // Change failed. Flip the state.
+      })
+  }, [activated])
+
   // Update QR code when options change
   useEffect(() => {
     if (qrRef.current) {
@@ -336,79 +357,91 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   return (
     <Box py="md">
       <Title order={2} mb="md">QR Code Editor</Title>
-      <Grid gutter="lg">
+      <Grid>
         {/* Controls Column */}
         <Grid.Col span={{ base: 12, md: 7 }}>
-          <Title order={4}>Basic</Title>
-          <Stack gap={8}>
-            <TextInput
-              label="Nickname"
-              value={nickname}
-              onChange={(e) => setNickname(e.currentTarget.value)}
-              placeholder="My Site"
-            />
-            <TextInput
-              label="URL"
-              value={sendTo}
-              onChange={(e) => setSendTo(e.currentTarget.value)}
-              placeholder="https://example.com"
-            />
-            <Text size="1.1rem">Activation Status</Text>
 
-            <Group justify="space-between">
-              <Switch
-                label={`is ${activated ? 'active' : 'deactive'}`}
-                size="lg"
-                checked={activated}
-                onChange={(e) => {
-                  if(!!onSave) {
-                    // @ts-ignore
-                    onSave({id: qrObj!.id as string})
-                  }
-                  setActivated(e.currentTarget.checked);
-                }}
-              />
-              <Popover withArrow width={350}>
-                <Popover.Target><InfoIcon size={32} weight="duotone" /></Popover.Target>
-                <Popover.Dropdown>
-                  <Text>
-                    An active QR will consume a credit and enable the location you provided above. Taking users that scan your QR to the route. Make sure your route
-                    is valid otherwise users will see a 404 error. Scanning a deactivated QR will also result in a 404. Deactivating the QR will free up the credit,
-                    allowing you to activate a different QR code.
-                  </Text>
-                </Popover.Dropdown>
-              </Popover>
-            </Group>
+          <Button 
+            fullWidth 
+            onClick={() => {
+              console.log('This is what we get with buildOption\n', buildOptions());
+            }}
+            leftSection={<FloppyDiskBackIcon weight='duotone' size={28} />}
+          >
+            Save
+          </Button>
 
-          </Stack>
 
-          <Button onClick={() => {
-            console.log('This is what we get with buildOption\n', buildOptions());
-          }}>Testing</Button>
-          <Accordion multiple defaultValue={["dots"]}>
+          <Accordion multiple defaultValue={["data"]}>
             {/* Data Section */}
-            {/* <Accordion.Item value="data">
-              <Accordion.Control>Data</Accordion.Control>
+            <Accordion.Item value="data">
+              <Accordion.Control>Basic</Accordion.Control>
               <Accordion.Panel>
                 <Stack gap="sm">
                   <TextInput
-                    label="URL / Text"
-                    value={data}
-                    onChange={(e) => setData(e.currentTarget.value)}
+                    label="Nickname"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.currentTarget.value)}
+                    placeholder="My Site"
+                  />
+                  <TextInput
+                    label="URL"
+                    value={sendTo}
+                    onChange={(e) => setSendTo(e.currentTarget.value)}
                     placeholder="https://example.com"
                   />
-                  <FileInput
-                    label="Logo Image"
-                    accept="image/*"
-                    value={imageFile}
-                    onChange={setImageFile}
-                    clearable
-                    placeholder="Upload logo"
-                    hidden={disableImage}
-                  />
+                  {/* *** The activation is a dynamic QR option *** */}
+                  {!!qrObj && <><Text size="1.1rem">Activation Status</Text>
+                    <Group justify="space-between">
+                      <Switch
+                        label={`is ${activated ? 'active' : 'deactive'}`}
+                        size="lg"
+                        checked={activated}
+                        onChange={(e) => {
+                          whoManipulatedActivation.current = 'user'
+                          setActivated(e.currentTarget.checked);
+                        }}
+                      />
+                      <Popover withArrow width={350}>
+                        <Popover.Target><InfoIcon size={32} weight="duotone" /></Popover.Target>
+                        <Popover.Dropdown>
+                          <Text>
+                            An active QR will consume a credit and enable the location you provided above. Taking users that scan your QR to the route. Make sure your route
+                            is valid otherwise users will see a 404 error. Scanning a deactivated QR will also result in a 404.
+                            <br /><br />
+                            Deactivating the QR will free up the credit,
+                            allowing you to activate a different QR code.
+                          </Text>
+                        </Popover.Dropdown>
+                      </Popover>
+                    </Group></>}
+                  <Group justify="space-between" wrap="nowrap">
+                    <FileInput
+                      label="Logo Image"
+                      accept="image/*"
+                      value={imageFile}
+                      onChange={setImageFile}
+                      clearable
+                      placeholder="Upload logo"
+                      hidden={disableImage}
+                      w={'85%'}
+                    />
+                    <Popover withArrow width={350}>
+                      <Popover.Target><InfoIcon size={32} weight="duotone" /></Popover.Target>
+                      <Popover.Dropdown>
+                        <Text>
+                          Currently, we do NOT save images on our server. So the image will disappear if your refresh the page or move to a different computer. However,
+                          you can still add an images and download the QR with the logo applied.
+                          <br /><br />
+                          We are working to add the ability to save the image
+                        </Text>
+                      </Popover.Dropdown>
+                    </Popover>
+                  </Group>
+
                 </Stack>
               </Accordion.Panel>
-            </Accordion.Item> */}
+            </Accordion.Item>
 
             {/* Dimensions */}
             <Accordion.Item value="dimensions">
@@ -566,10 +599,10 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
               />
               <Text fw={600} size="sm" mt="md">Download</Text>
               <Group>
-                <Button variant="filled" onClick={() => handleDownload("png")}>PNG</Button>
-                <Button variant="filled" onClick={() => handleDownload("jpeg")}>JPEG</Button>
-                <Button variant="filled" onClick={() => handleDownload("svg")}>SVG</Button>
-                <Button variant="filled" onClick={() => handleDownload("webp")}>WEBP</Button>
+                <Button variant="light" onClick={() => handleDownload("png")}>PNG</Button>
+                <Button variant="light" onClick={() => handleDownload("jpeg")}>JPEG</Button>
+                <Button variant="light" onClick={() => handleDownload("svg")}>SVG</Button>
+                <Button variant="light" onClick={() => handleDownload("webp")}>WEBP</Button>
               </Group>
             </Stack>
           </Paper>

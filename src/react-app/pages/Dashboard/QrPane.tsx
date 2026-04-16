@@ -24,7 +24,13 @@ export function QrPane() {
             <PlusIcon size={'2rem'} />
             <TextInput label='Link to' placeholder="https://example.com" value={newQrLink} onChange={setNewQrLink} />
             <TextInput label='Nickname' placeholder="QR to Homepage" value={newQrNickname} onChange={setNewQrNickname} />
-            <Button loading={isBusy} onClick={() => createQr(newQrLink, newQrNickname)} disabled={!newQrLink}>Create New QR</Button>
+            <Button loading={isBusy} onClick={() => {
+                createQr(newQrLink, newQrNickname)
+                    .then(() => {
+                        setNewQrLink('');
+                        setNewQrNickname('');
+                    })
+            }} disabled={!newQrLink}>Create New QR</Button>
         </Stack>)
     }
 
@@ -51,11 +57,11 @@ export function QrPane() {
         }
         return (<><Group justify='space-between' wrap='nowrap'>
             <Stack gap={0} align="start" ta={'start'}>
-                <Text size='lg'>{firstLine}</Text>
-                <Text size='md' c='dimmed'>{q.redirectLink}</Text>
+                <Text size='lg' truncate={'end'} w={{ base: 100, md: 120, lg: 160 }}>{firstLine}</Text>
+                <Text size='md' c='dimmed' truncate={'end'} w={{ base: 100, md: 120, lg: 160 }}>{q.redirectLink}</Text>
             </Stack>
             <Group gap={12} wrap="nowrap" justify='right'>
-                <Text c={q.active ? 'green' : 'orange'}>{q.active ? 'activated' : 'deactive'}</Text>
+                <Text c={q.active ? 'green' : 'orange'}>{q.active ? 'ON' : 'OFF'}</Text>
                 <Button onClick={() => selectQrObj(q.id)}>Select</Button>
             </Group>
         </Group>
@@ -74,7 +80,9 @@ export function QrPane() {
                 <Text size="1.4rem">{usedCredits} / {ownedCredits}</Text>
                 {isMonthlySuber && <Text c='yellow'>You are a Monthly Subscriber</Text>}
             </Stack>
-            <Button leftSection={<PlusIcon />} onClick={() => setSelectedQr(null)} disabled={!selectedQr}>
+            <Button leftSection={<PlusIcon />} onClick={() => setSelectedQr(null)} 
+                disabled={!selectedQr} variant="light"
+            >
                 Create
             </Button>
         </Group>)

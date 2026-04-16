@@ -171,27 +171,36 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
             // TODO: Implement this
             return c.json({ link: 'noop' }, 200);
         case 'POST':
-            const body = await c.req.json() as { stripePurchaseId: string, redirectLink: string };
+            const body = await c.req.json() as { nickname?: string, redirectLink: string };
+            // *** 4/15/26 Update-- I don't think checking ahead of time is needed anymore... Tho
+            // *** doing a check to auto enable the QR would probably be nice.
             // TODO: Check the stripe purchase id is valid
-            if (body.stripePurchaseId === 'subscription') {
-                // TODO: Check the user has a subscription
-                if (!payload.monthlySuber) {
-                    return c.json({ error: 'invalid QR creation: no purchase or subscription' }, 400);
-                }
-            } else {
-                // TODO: Check the user has a purchase
-            }
+            // if (body.stripePurchaseId === 'subscription') {
+            //     // TODO: Check the user has a subscription
+            //     if (!payload.monthlySuber) {
+            //         return c.json({ error: 'invalid QR creation: no purchase or subscription' }, 400);
+            //     }
+            // } else {
+            //     // TODO: Check the user has a purchase
+            // }
             const { createId } = await import('./util/ids');
             const qr = await client.qr.create({
                 data: {
                     kvId: `${c.env.APP_HOST}/l/${createId()}`,
                     redirectLink: body.redirectLink,
                     userId: payload.userId,
-                    nickname: 'QR Dynamics'
+                    nickname: body.nickname || 'QR Dynamics',
+                    active: false // Hardcoded false for the moment -- until we get a little smarter about it
+                }
+            });
+            const ac = await client.qr.count({
+                where: {
+                    userId: payload.userId,
+                    active: true
                 }
             });
             c.executionCtx.waitUntil(client.$disconnect());
-            return c.json({ qr }, 200);
+            return c.json({ qr, activeCount: ac }, 200);
         case 'PUT':
             const b = await c.req.json() as QrUncheckedUpdateInput;
             if('kvId' in b) return c.json({msg: 'You can not change the kvId once created'}, 400);
@@ -212,7 +221,13 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
             }
             const updatedQr = await client.qr.update({
                 where: { id: b.id as string },
-                data: {...b}
+                data: {...b},
+            });
+            const activeCount = await client.qr.count({
+                where: {
+                    userId: payload.userId,
+                    active: true
+                }
             });
             const kvParts = updatedQr.kvId.split('/');
             if(updatedQr.active){
@@ -221,7 +236,10 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
                 await c.env.KV.delete(kvParts[kvParts.length -1])
             }
             c.executionCtx.waitUntil(client.$disconnect());
-            return c.json({ qr: updatedQr }, 200);
+            return c.json({ qr: updatedQr, activeCount }, 200);
+        default:
+            // Unsupported method hit
+            return c.text("Method not allowed", 405);
     }
 
 });

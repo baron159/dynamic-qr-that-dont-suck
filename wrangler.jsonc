@@ -26,7 +26,7 @@
 		{
 			"binding": "KV",
 			"id": "33fbded2806b4c1a800364f4badcb20a",
-			"remote": true
+			"remote": false
 		}
 	],
 	"d1_databases": [
