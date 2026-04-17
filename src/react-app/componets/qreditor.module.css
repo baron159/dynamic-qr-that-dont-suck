@@ -1,0 +1,13 @@
+
+.floatingSaveBtn {
+    position: fixed !important;
+    right: 2rem;
+    bottom: 4rem;
+}
+
+.canvasBox {
+    canvas {
+        max-width: 350px;
+        max-height: 350px;
+    }
+}

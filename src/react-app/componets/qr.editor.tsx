@@ -20,10 +20,14 @@ import {
   Text,
   TextInput,
   Title,
+  ActionIcon
 } from "@mantine/core";
 import type { Qr } from "pc/browser.ts";
 import { useInfo } from '../contexts/info.ctx.tsx';
 import { InfoIcon, FloppyDiskBackIcon } from '@phosphor-icons/react';
+import { deepCopy } from "../util/obj.ops.ts";
+
+import styles from './qreditor.module.css';
 
 type DotType = "square" | "dots" | "rounded" | "extra-rounded" | "classy" | "classy-rounded";
 type CornerSquareType = DotType | "dot";
@@ -71,7 +75,7 @@ function buildGradient(g: GradientState): Gradient {
 }
 
 function buildColorOptions(s: SectionColorState) {
-  if (s.gradient.enabled) {
+  if (!!s.gradient && s.gradient.enabled) {
     return { gradient: buildGradient(s.gradient) };
   }
   return { color: s.color };
@@ -87,14 +91,14 @@ const DOT_TYPES: { label: string; value: DotType }[] = [
 ];
 
 const CORNER_SQUARE_TYPES: { label: string; value: string }[] = [
-  { label: "None", value: "" },
+  // { label: "None", value: "" },
   { label: "Square", value: "square" },
   { label: "Dot", value: "dot" },
   { label: "Extra Rounded", value: "extra-rounded" },
 ];
 
 const CORNER_DOT_TYPES: { label: string; value: string }[] = [
-  { label: "None", value: "" },
+  // { label: "None", value: "" },
   { label: "Square", value: "square" },
   { label: "Dot", value: "dot" },
 ];
@@ -113,10 +117,10 @@ function ColorGradientControls({
     <Stack gap="xs">
       <Switch
         label="Gradient"
-        checked={state.gradient.enabled}
+        checked={state.gradient?.enabled || false}
         onChange={(e) => updateGradient({ enabled: e.currentTarget.checked })}
       />
-      {state.gradient.enabled ? (
+      {state.gradient?.enabled ? (
         <>
           <Group grow>
             <Select
@@ -166,9 +170,10 @@ export interface QrEditorProps {
   disableImgOptions?: boolean;
   disableImage?: boolean;
   qrObj?: Qr;
+  showFloatingSave?: boolean;
 }
 
-export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined }: QrEditorProps) {
+export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = true, disableImage = false, qrObj = undefined, showFloatingSave = false }: QrEditorProps) {
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { changeQrStatus, updateQr } = useInfo();
@@ -191,11 +196,11 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   const [dotsColor, setDotsColor] = useState<SectionColorState>(defaultColor("#000000"));
 
   // Corners Square
-  const [cornerSquareType, setCornerSquareType] = useState("");
+  const [cornerSquareType, setCornerSquareType] = useState('square');
   const [cornersSquareColor, setCornersSquareColor] = useState<SectionColorState>(defaultColor("#000000"));
 
   // Corners Dot
-  const [cornerDotType, setCornerDotType] = useState("");
+  const [cornerDotType, setCornerDotType] = useState("square");
   const [cornersDotColor, setCornersDotColor] = useState<SectionColorState>(defaultColor("#000000"));
 
   // Background
@@ -236,14 +241,14 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
     setDotsColor(!!bb ? buildColorOptions(bb?.dotsOptions) : defaultColor('#000000'));
 
     // Corners Square
-    setCornerSquareType(bb?.cornersSquareOptions?.type || '');
+    setCornerSquareType(bb?.cornersSquareOptions?.type || 'square');
     // @ts-ignore
     if (!!bb && 'gradient' in bb.cornersSquareOptions!) bb.cornersSquareOptions!.gradient['enabled'] = true;
     // @ts-ignore
     setCornersSquareColor(!!bb ? buildColorOptions(bb?.cornersSquareOptions) : defaultColor('#000000'));
 
     // Corner Dot
-    setCornerDotType(bb?.cornersDotOptions?.type || '');
+    setCornerDotType(bb?.cornersDotOptions?.type || 'square');
     // @ts-ignore
     if (!!bb && 'gradient' in bb.cornersDotOptions) bb.cornersDotOptions.gradient['enabled'] = true;
     // @ts-ignore
@@ -328,11 +333,11 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   }, []);
 
   useEffect(() => {
-    if(whoManipulatedActivation.current !== 'user') return;
-    else if(!qrObj) return;
+    if (whoManipulatedActivation.current !== 'user') return;
+    else if (!qrObj) return;
     changeQrStatus(qrObj.id, activated)
       .then(rtn => {
-        if(!rtn){
+        if (!rtn) {
           whoManipulatedActivation.current = 'effect';
           setActivated(prev => !prev); // Change failed. Flip the state.
         }
@@ -351,25 +356,39 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   }, [buildOptions]);
 
   const handleDownload = (extension: FileExtension) => {
-    qrRef.current?.download({ extension, name: "qr-code" });
+    qrRef.current?.download({ extension, name: `${nickname.replace(' ', '_')}` });
   };
+
+  const handleSave = async () => {
+    if (!qrObj) return; // No QR object present
+    const baseValues = deepCopy(qrObj, 'createdAt', 'active', 'kvId', 'scanCount', 'updatedAt', 'userId', 'creditId');
+    // TEMP LINE because we don't save images currently
+    baseValues.options = deepCopy(buildOptions(), 'image');
+    baseValues.redirectLink = sendTo;
+    baseValues.nickname = nickname;
+    await updateQr(baseValues.id, baseValues);
+  }
 
   return (
     <Box py="md">
-      <Title order={2} mb="md">QR Code Editor</Title>
+      {!!showFloatingSave && <ActionIcon size={64} radius={32} className={styles.floatingSaveBtn} onClick={handleSave}>
+        <FloppyDiskBackIcon weight="duotone" size={48} />
+      </ActionIcon>}
+      <Group justify="space-between" wrap='nowrap'>
+        <Title order={2} mb="md" flex={1}>QR Code Editor</Title>
+        <Button
+          flex={1}
+          onClick={handleSave}
+          leftSection={<FloppyDiskBackIcon weight='duotone' size={28} />}
+        >
+          Save
+        </Button>
+      </Group>
       <Grid>
         {/* Controls Column */}
         <Grid.Col span={{ base: 12, md: 7 }}>
 
-          <Button 
-            fullWidth 
-            onClick={() => {
-              console.log('This is what we get with buildOption\n', buildOptions());
-            }}
-            leftSection={<FloppyDiskBackIcon weight='duotone' size={28} />}
-          >
-            Save
-          </Button>
+
 
 
           <Accordion multiple defaultValue={["data"]}>
@@ -377,6 +396,9 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
             <Accordion.Item value="data">
               <Accordion.Control>Basic</Accordion.Control>
               <Accordion.Panel>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  The most important information. QR data, activation status, and a nickname for your refrence!
+                </Text>
                 <Stack gap="sm">
                   <TextInput
                     label="Nickname"
@@ -447,6 +469,10 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
             <Accordion.Item value="dimensions">
               <Accordion.Control>Dimensions</Accordion.Control>
               <Accordion.Panel>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  The max preview size is 350 x 350, but your dimensions are applied when you download the
+                  QR via the buttons below the preview.
+                </Text>
                 <Group grow>
                   <NumberInput label="Width" value={width} onChange={(v) => setWidth(Number(v) || 300)} min={100} max={1000} />
                   <NumberInput label="Height" value={height} onChange={(v) => setHeight(Number(v) || 300)} min={100} max={1000} />
@@ -459,6 +485,11 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
             <Accordion.Item value="dots">
               <Accordion.Control>Dots Options</Accordion.Control>
               <Accordion.Panel>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  These settings apply to all dots that make up the
+                  actually data of the QR code. Be cautious of colors combinations,
+                  if you can't see the dots it's likely the camera won't either.
+                </Text>
                 <Stack gap="sm">
                   <Text size="sm" fw={500}>Style</Text>
                   <SegmentedControl
@@ -476,6 +507,11 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
             <Accordion.Item value="cornersSquare">
               <Accordion.Control>Corners Square Options</Accordion.Control>
               <Accordion.Panel>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  The style of the 3 corner outter most squares.
+                  Be cautious of colors combinations,
+                  if you can't see the dots it's likely the camera won't either.
+                </Text>
                 <Stack gap="sm">
                   <Select
                     label="Style"
@@ -492,6 +528,11 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
             <Accordion.Item value="cornersDot">
               <Accordion.Control>Corners Dot Options</Accordion.Control>
               <Accordion.Panel>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  The style of the 3 corner inner most squares/dots.
+                  Be cautious of colors combinations,
+                  if you can't see the dots it's likely the camera won't either.
+                </Text>
                 <Stack gap="sm">
                   <Select
                     label="Style"
@@ -508,6 +549,14 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
             <Accordion.Item value="background">
               <Accordion.Control>Background Options</Accordion.Control>
               <Accordion.Panel>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  Incase this isn't clear, this effects the background color of the QR code.
+                </Text>
+                <Text ta='center' mb='1.2rem' c='dimmed'>
+                  Note: There is a potential bug, were background colors don't take effect.
+                  Save & refresh the page, and the proper background should be active.
+                  We are working to resolve this issue.
+                </Text>
                 <ColorGradientControls state={bgColor} onChange={setBgColor} />
               </Accordion.Panel>
             </Accordion.Item>
@@ -596,6 +645,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
               <Box
                 ref={containerRef}
                 style={{ display: "flex", justifyContent: "center" }}
+                className={styles.canvasBox}
               />
               <Text fw={600} size="sm" mt="md">Download</Text>
               <Group>

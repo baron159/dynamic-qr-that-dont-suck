@@ -1,13 +1,12 @@
-import { Group, Grid, Text, Button, Stack, Divider, TextInput } from "@mantine/core";
+import { Group, Grid, Text, Button, Stack, Divider, TextInput, ActionIcon } from "@mantine/core";
 import { QrEditor } from "../../componets/qr.editor";
 import CreditPurchaseKicker from "../../componets/credit.purchase.kicker";
 import { useInfo } from "../../contexts/info.ctx";
 import { useState } from "react";
 import { Qr } from "pc/browser.ts";
-import { PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon, FloppyDiskBackIcon } from '@phosphor-icons/react';
 import { useInputState } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-
 
 
 export function QrPane() {
@@ -89,6 +88,7 @@ export function QrPane() {
     }
 
     return (<Grid py='1rem'>
+        
         <Grid.Col span={3}>
             <Stack justify='center' gap={4} ta={'center'}>
                 <CreditPurchaseKicker />
@@ -101,7 +101,7 @@ export function QrPane() {
             <Divider h='100%' size={'lg'} orientation="vertical" />
         </Grid.Col>
         <Grid.Col span={8}>
-            {selectedQr ? <QrEditor qrObj={selectedQr} /> : createNewQr()}
+            {selectedQr ? <QrEditor qrObj={selectedQr} showFloatingSave /> : createNewQr()}
 
         </Grid.Col>
     </Grid>)
