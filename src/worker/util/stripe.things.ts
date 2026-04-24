@@ -97,7 +97,7 @@ export async function checkoutCompletedHandler(payload: Stripe.CheckoutSessionCo
             await client.user.update({
                 where: { id: userId },
                 data: {
-                    monthlySubscription: sub.id, 
+                    monthlySubscription: sub.id,
                     stripeCustomerId: sub.customer as string,
                     subscriptionValidTill: new Date(endStamp * 1000)
                 }
@@ -118,3 +118,55 @@ export async function checkoutCompletedHandler(payload: Stripe.CheckoutSessionCo
         console.error(`DURING CHECKOUT COMPLETE\n\n`, error)
     }
 };
+
+interface SubscriptionStatusResult {
+    isActive: boolean;
+    endDate: Date | null;
+    status: Stripe.Subscription.Status;
+    cancelAtPeriodEnd: boolean;
+}
+
+/**
+ * Check if a Stripe subscription is active and return its end date.
+ *
+ * @param subscriptionId - The Stripe subscription ID (e.g., 'sub_xxx')
+ * @returns SubscriptionStatusResult with active status and end date
+ *
+ * Active statuses: 'active', 'trialing'
+ * End date is current_period_end for active subs, ended_at for canceled subs
+ */
+export async function checkSubscriptionStatus(
+    subscriptionId: string
+): Promise<SubscriptionStatusResult> {
+    const { tryGetContext } = await import('hono/context-storage');
+    const ctx = tryGetContext<{ Bindings: Env }>();
+    if (!ctx) throw new Error('Unable to retrieve context');
+    const stripe = await stripeClient(ctx.env.STRIPE_SECRET);
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+    // Consider both 'active' and 'trialing' as active states
+    const activeStatuses: Stripe.Subscription.Status[] = ['active', 'trialing'];
+    const isActive = activeStatuses.includes(subscription.status);
+
+    // Determine the end date:
+    // - If canceled/ended: use ended_at
+    // - Otherwise: use current_period_end (when the current billing period ends)
+    let endDate: Date | null = null;
+
+    if (subscription.ended_at) {
+        endDate = new Date(subscription.ended_at * 1000);
+        // @ts-ignore
+    } else if ('current_period_end' in subscription.current_period_end) {
+        // @ts-ignore
+        endDate = new Date(subscription.current_period_end * 1000);
+    } else if (subscription.items.data.length > 0){
+        endDate = new Date(subscription.items.data[0].current_period_end as number * 1000)
+    }
+
+    return {
+        isActive,
+        endDate,
+        status: subscription.status,
+        cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    };
+}
