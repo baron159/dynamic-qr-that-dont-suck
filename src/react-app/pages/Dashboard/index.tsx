@@ -10,7 +10,6 @@ export function Dashboard() {
         <Tabs defaultValue={'qr'}>
             <Tabs.List>
                 <Tabs.Tab value="qr">QRs</Tabs.Tab>
-                <Tabs.Tab value="static">Static QRs Editor</Tabs.Tab>
                 <Tabs.Tab value="account">Account</Tabs.Tab>
             </Tabs.List>
             <Tabs.Panel value="account">

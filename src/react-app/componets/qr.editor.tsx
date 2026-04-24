@@ -355,6 +355,12 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
     }
   }, [buildOptions]);
 
+  useEffect(() => {
+    if(!!sendTo && !qrObj){
+      setData(sendTo)
+    }
+  }, [sendTo])
+
   const handleDownload = (extension: FileExtension) => {
     qrRef.current?.download({ extension, name: `${nickname.replace(' ', '_')}` });
   };
@@ -376,21 +382,17 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
       </ActionIcon>}
       <Group justify="space-between" wrap='nowrap'>
         <Title order={2} mb="md" flex={1}>QR Code Editor</Title>
-        <Button
+        { !!qrObj && <Button
           flex={1}
           onClick={handleSave}
           leftSection={<FloppyDiskBackIcon weight='duotone' size={28} />}
         >
           Save
-        </Button>
+        </Button>}
       </Group>
       <Grid>
         {/* Controls Column */}
         <Grid.Col span={{ base: 12, md: 7 }}>
-
-
-
-
           <Accordion multiple defaultValue={["data"]}>
             {/* Data Section */}
             <Accordion.Item value="data">
@@ -400,12 +402,12 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
                   The most important information. QR data, activation status, and a nickname for your refrence!
                 </Text>
                 <Stack gap="sm">
-                  <TextInput
+                  { !!qrObj && <TextInput
                     label="Nickname"
                     value={nickname}
                     onChange={(e) => setNickname(e.currentTarget.value)}
                     placeholder="My Site"
-                  />
+                  />}
                   <TextInput
                     label="URL"
                     value={sendTo}

@@ -111,7 +111,6 @@ app.on(['get', 'put', 'post'], '/api/auth/info', async c => {
     const payload = c.get('jwtPayload') as JwtPayload;
     const { InitDb } = await import('./util/db.client');
     const client = await InitDb(c.env);
-
     switch (c.req.method) {
         case 'GET':
             const user = await client.user.findUnique({
@@ -130,9 +129,14 @@ app.on(['get', 'put', 'post'], '/api/auth/info', async c => {
             return c.json({ user }, 200);
         case 'POST':
         case 'PUT':
-            return c.json({ msg: 'noop' }, 401);
+            const data = await c.req.json() as {phone?:string, name?:string};
+            const updated = await client.user.update({
+                where: { id: payload.userId },
+                data
+            })
+            return c.json({user: updated},200);
         default:
-            return c.json({ err: 'un-supported method' }, 400);
+            return c.json({ err: 'un-supported method' }, 405);
     }
 });
 
@@ -145,6 +149,26 @@ app.get('/api/auth/credit/purchase', async (c) => {
         const checkoutKeys = await createDynamicCreditCheckoutSession(
             payload.userId,
             !!qnty ? parseInt(qnty) : 1
+        );
+        if (!checkoutKeys.sessionUrl) {
+            return c.json({ error: 'No session URL' }, 502);
+        }
+        return c.json({url: checkoutKeys.sessionUrl}, 200);
+    } catch (e) {
+        console.error('createDynamicCreditCheckoutSession', e);
+        const msg = e instanceof Error ? e.message : 'Stripe checkout failed';
+        return c.json({ error: msg }, 502);
+    }
+});
+
+app.get('/api/auth/monthly/purchase', async (c) => {
+    const { createDynamicCreditCheckoutSession, DYNAMIC_MONTHLY_LOOKUP_KEY } = await import('./util/stripe.things');
+    const payload = c.get('jwtPayload') as JwtPayload;
+    try {
+        const checkoutKeys = await createDynamicCreditCheckoutSession(
+            payload.userId,
+            1,
+            DYNAMIC_MONTHLY_LOOKUP_KEY
         );
         if (!checkoutKeys.sessionUrl) {
             return c.json({ error: 'No session URL' }, 502);
@@ -252,6 +276,32 @@ app.all('/api/auth/qr/:linkId');
 // Route for getting the QR
 app.get('/api/qr/:linkId')
 
+app.post('/api/auth/support/ticket', async c => {
+    const { InitDb } = await import('./util/db.client');
+    const { supportTicketId } = await import('./util/ids');
+    const client = await InitDb(c.env);
+    const payload = c.get('jwtPayload') as JwtPayload;
+    // Look for the user
+    const usr = await client.user.findUniqueOrThrow({
+        where:{id: payload.userId},
+        include: {_count: {select: {Credit: true}}}
+    });
+    const supportBdy = await c.req.json() as {msg: string, mthd?:'phone' | 'email'};
+    const tid = supportTicketId();
+    const supportDoc = {
+        tid,
+        uName: usr.name,
+        email: usr.email,
+        phone: usr.phone,
+        numCredits: usr._count.Credit,
+        subscriber: usr.monthlySubscription,
+        ...supportBdy
+    };
+    await c.env.R2.put(`/support/tickets/${usr.name}_${tid}.json`, JSON.stringify(supportDoc));
+    c.executionCtx.waitUntil(client.$disconnect());
+    return c.text('ok', 200)
+})
+
 // The route that looks up the redirect 
 app.get("/l/:linkId", async (c) => {
     const kvid = c.req.param('linkId');
@@ -292,4 +342,14 @@ app.all('/api/webhooks/stripe', async (c) => {
     return c.json({ message: 'Webhook received' }, 200);
 });
 
-export default app;
+export default {
+    fetch: app.fetch,
+    scheduled: async( ctn:ScheduledController, env:Env, ctx:ExecutionContext )=>{
+        /**
+         * Need to check for invalid subscriber dates
+         * Check the latest subscription status
+         * - if no reneual, turn off all QRs. Remove parts in user obj
+         * - if yes, update the 'until' column with the latest
+         */
+    }
+};

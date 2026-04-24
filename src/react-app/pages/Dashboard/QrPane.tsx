@@ -54,14 +54,14 @@ export function QrPane() {
             const temp = new URL(q.redirectLink);
             firstLine = temp.hostname;
         }
-        return (<><Group justify='space-between' wrap='nowrap'>
+        return (<><Group justify='space-between' wrap='nowrap' key={q.id} id={q.id}>
             <Stack gap={0} align="start" ta={'start'}>
                 <Text size='lg' truncate={'end'} w={{ base: 100, md: 120, lg: 160 }}>{firstLine}</Text>
                 <Text size='md' c='dimmed' truncate={'end'} w={{ base: 100, md: 120, lg: 160 }}>{q.redirectLink}</Text>
             </Stack>
             <Group gap={12} wrap="nowrap" justify='right'>
                 <Text c={q.active ? 'green' : 'orange'}>{q.active ? 'ON' : 'OFF'}</Text>
-                <Button onClick={() => selectQrObj(q.id)}>Select</Button>
+                <Button onClick={() => selectQrObj(q.id)} variant={selectedQr?.id === q.id ? 'filled' : 'outline'}>Select</Button>
             </Group>
         </Group>
             <Divider ml={'2rem'} size={'sm'} />
@@ -80,7 +80,7 @@ export function QrPane() {
                 {isMonthlySuber && <Text c='yellow'>You are a Monthly Subscriber</Text>}
             </Stack>
             <Button leftSection={<PlusIcon />} onClick={() => setSelectedQr(null)} 
-                disabled={!selectedQr} variant="light"
+                disabled={!selectedQr} variant={!selectedQr ? 'filled' : 'light'}
             >
                 Create
             </Button>

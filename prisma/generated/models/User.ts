@@ -32,6 +32,7 @@ export type UserMinAggregateOutputType = {
   phone: string | null
   stripeCustomerId: string | null
   monthlySubscription: string | null
+  subscriptionValidTill: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +45,7 @@ export type UserMaxAggregateOutputType = {
   phone: string | null
   stripeCustomerId: string | null
   monthlySubscription: string | null
+  subscriptionValidTill: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +58,7 @@ export type UserCountAggregateOutputType = {
   phone: number
   stripeCustomerId: number
   monthlySubscription: number
+  subscriptionValidTill: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -70,6 +73,7 @@ export type UserMinAggregateInputType = {
   phone?: true
   stripeCustomerId?: true
   monthlySubscription?: true
+  subscriptionValidTill?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +86,7 @@ export type UserMaxAggregateInputType = {
   phone?: true
   stripeCustomerId?: true
   monthlySubscription?: true
+  subscriptionValidTill?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +99,7 @@ export type UserCountAggregateInputType = {
   phone?: true
   stripeCustomerId?: true
   monthlySubscription?: true
+  subscriptionValidTill?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -179,6 +185,7 @@ export type UserGroupByOutputType = {
   phone: string | null
   stripeCustomerId: string | null
   monthlySubscription: string | null
+  subscriptionValidTill: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -212,6 +219,7 @@ export type UserWhereInput = {
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   monthlySubscription?: Prisma.StringNullableFilter<"User"> | string | null
+  subscriptionValidTill?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Qr?: Prisma.QrListRelationFilter
@@ -226,6 +234,7 @@ export type UserOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   monthlySubscription?: Prisma.SortOrderInput | Prisma.SortOrder
+  subscriptionValidTill?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   Qr?: Prisma.QrOrderByRelationAggregateInput
@@ -243,6 +252,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   monthlySubscription?: Prisma.StringNullableFilter<"User"> | string | null
+  subscriptionValidTill?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Qr?: Prisma.QrListRelationFilter
@@ -257,6 +267,7 @@ export type UserOrderByWithAggregationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   monthlySubscription?: Prisma.SortOrderInput | Prisma.SortOrder
+  subscriptionValidTill?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -275,6 +286,7 @@ export type UserScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   monthlySubscription?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  subscriptionValidTill?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -287,6 +299,7 @@ export type UserCreateInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Qr?: Prisma.QrCreateNestedManyWithoutUserInput
@@ -301,6 +314,7 @@ export type UserUncheckedCreateInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Qr?: Prisma.QrUncheckedCreateNestedManyWithoutUserInput
@@ -315,6 +329,7 @@ export type UserUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Qr?: Prisma.QrUpdateManyWithoutUserNestedInput
@@ -329,6 +344,7 @@ export type UserUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Qr?: Prisma.QrUncheckedUpdateManyWithoutUserNestedInput
@@ -343,6 +359,7 @@ export type UserCreateManyInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -355,6 +372,7 @@ export type UserUpdateManyMutationInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -367,6 +385,7 @@ export type UserUncheckedUpdateManyInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -379,6 +398,7 @@ export type UserCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   monthlySubscription?: Prisma.SortOrder
+  subscriptionValidTill?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -391,6 +411,7 @@ export type UserMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   monthlySubscription?: Prisma.SortOrder
+  subscriptionValidTill?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -403,6 +424,7 @@ export type UserMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   monthlySubscription?: Prisma.SortOrder
+  subscriptionValidTill?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -418,6 +440,10 @@ export type StringFieldUpdateOperationsInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -460,6 +486,7 @@ export type UserCreateWithoutQrInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Credit?: Prisma.CreditCreateNestedManyWithoutUserInput
@@ -473,6 +500,7 @@ export type UserUncheckedCreateWithoutQrInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Credit?: Prisma.CreditUncheckedCreateNestedManyWithoutUserInput
@@ -502,6 +530,7 @@ export type UserUpdateWithoutQrInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Credit?: Prisma.CreditUpdateManyWithoutUserNestedInput
@@ -515,6 +544,7 @@ export type UserUncheckedUpdateWithoutQrInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Credit?: Prisma.CreditUncheckedUpdateManyWithoutUserNestedInput
@@ -528,6 +558,7 @@ export type UserCreateWithoutCreditInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Qr?: Prisma.QrCreateNestedManyWithoutUserInput
@@ -541,6 +572,7 @@ export type UserUncheckedCreateWithoutCreditInput = {
   phone?: string | null
   stripeCustomerId?: string | null
   monthlySubscription?: string | null
+  subscriptionValidTill?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   Qr?: Prisma.QrUncheckedCreateNestedManyWithoutUserInput
@@ -570,6 +602,7 @@ export type UserUpdateWithoutCreditInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Qr?: Prisma.QrUpdateManyWithoutUserNestedInput
@@ -583,6 +616,7 @@ export type UserUncheckedUpdateWithoutCreditInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   monthlySubscription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subscriptionValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Qr?: Prisma.QrUncheckedUpdateManyWithoutUserNestedInput
@@ -636,6 +670,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   phone?: boolean
   stripeCustomerId?: boolean
   monthlySubscription?: boolean
+  subscriptionValidTill?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   Qr?: boolean | Prisma.User$QrArgs<ExtArgs>
@@ -651,6 +686,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   phone?: boolean
   stripeCustomerId?: boolean
   monthlySubscription?: boolean
+  subscriptionValidTill?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -663,6 +699,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   phone?: boolean
   stripeCustomerId?: boolean
   monthlySubscription?: boolean
+  subscriptionValidTill?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -675,11 +712,12 @@ export type UserSelectScalar = {
   phone?: boolean
   stripeCustomerId?: boolean
   monthlySubscription?: boolean
+  subscriptionValidTill?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passHash" | "name" | "phone" | "stripeCustomerId" | "monthlySubscription" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passHash" | "name" | "phone" | "stripeCustomerId" | "monthlySubscription" | "subscriptionValidTill" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Qr?: boolean | Prisma.User$QrArgs<ExtArgs>
   Credit?: boolean | Prisma.User$CreditArgs<ExtArgs>
@@ -702,6 +740,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     phone: string | null
     stripeCustomerId: string | null
     monthlySubscription: string | null
+    subscriptionValidTill: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1136,6 +1175,7 @@ export interface UserFieldRefs {
   readonly phone: Prisma.FieldRef<"User", 'String'>
   readonly stripeCustomerId: Prisma.FieldRef<"User", 'String'>
   readonly monthlySubscription: Prisma.FieldRef<"User", 'String'>
+  readonly subscriptionValidTill: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

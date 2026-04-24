@@ -13,17 +13,18 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(cuid(2))
-  email               String   @unique
-  passHash            String
-  name                String
-  phone               String?
-  stripeCustomerId    String?
-  monthlySubscription String? // Users can have
-  Qr                  Qr[]
-  Credit              Credit[]
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                    String    @id @default(cuid(2))
+  email                 String    @unique
+  passHash              String
+  name                  String
+  phone                 String?
+  stripeCustomerId      String?
+  monthlySubscription   String? // Users can have
+  subscriptionValidTill DateTime?
+  Qr                    Qr[]
+  Credit                Credit[]
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 }
 
 model Qr {

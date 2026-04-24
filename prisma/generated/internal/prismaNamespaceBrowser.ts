@@ -77,6 +77,7 @@ export const UserScalarFieldEnum = {
   phone: 'phone',
   stripeCustomerId: 'stripeCustomerId',
   monthlySubscription: 'monthlySubscription',
+  subscriptionValidTill: 'subscriptionValidTill',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

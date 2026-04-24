@@ -12,6 +12,7 @@ import EntryPage from "./pages/EntryPage";
 import { Dashboard } from "./pages/Dashboard";
 import Landing from "./pages/Landing.tsx";
 import Header from "./header.tsx";
+import StaticEditor from './pages/StaticEditor.tsx';
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
                         <Route path='/' component={Landing} />
                         <Route path="/login" component={EntryPage} />
                         <PrivateRoute path="/dashboard" component={Dashboard} />
+                        <Route path='/static-editor' component={StaticEditor} />
                     </Switch>
                 </AppShell.Main>
                 <AppShell.Footer>

@@ -37,6 +37,12 @@
 			"migrations_dir": "./prisma/d1_migrate",
 			"remote": false
 		}
+	],
+	"r2_buckets": [
+		{
+			"bucket_name": "dqr-bucket",
+			"binding": "R2"
+		}
 	]
 	/**
 	 * Smart Placement
