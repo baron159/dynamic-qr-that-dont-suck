@@ -89,7 +89,7 @@ export function QrPane() {
 
     return (<Grid py='1rem'>
         
-        <Grid.Col span={3}>
+        <Grid.Col span={{base: 5, md: 4, lg: 3}}>
             <Stack justify='center' gap={4} ta={'center'}>
                 <CreditPurchaseKicker />
                 {creditInfo()}
@@ -100,7 +100,7 @@ export function QrPane() {
         <Grid.Col span={'content'}>
             <Divider h='100%' size={'lg'} orientation="vertical" />
         </Grid.Col>
-        <Grid.Col span={8}>
+        <Grid.Col span={{base: 6, md: 7, lg: 8}}>
             {selectedQr ? <QrEditor qrObj={selectedQr} showFloatingSave /> : createNewQr()}
 
         </Grid.Col>

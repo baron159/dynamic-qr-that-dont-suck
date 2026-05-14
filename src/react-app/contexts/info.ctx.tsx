@@ -22,6 +22,7 @@ export interface InfoContextType {
     usedCredits: number
     isMonthlySuber: boolean
     isBusy: boolean
+    billingPortal: string
     // Helper functions
     updateUser: (up: UserUpdateParams) => Promise<void>
     updateQr: (qi: string, qp: QrUpdateParams) => Promise<boolean>
@@ -41,6 +42,7 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const [isMonthlySuber, setMonthly] = useState(false);
     const [qrList, listHandlers] = useListState<Qr>([]);
     const [isBusy, setBusy] = useState(false);
+    const [ billingPortal, setBillingPortal ] = useState<string>('');
 
     useEffect(()=>{
         if(isAuthenticated){
@@ -52,7 +54,9 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         const req = new Request(INFO_EP);
         injectHeader(req);
         const res = await fetch(req);
-        const b = (await res.json() as {user: InfoRes}).user;
+        const infoResData = await res.json() as {user: InfoRes, billingPortal: string};
+        setBillingPortal(infoResData.billingPortal);
+        const b = infoResData.user;
         console.log('results things', b)
         setUser({
             name: b.name,
@@ -61,6 +65,7 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             updatedAt: b.updatedAt,
             stripeCustomerId: b.stripeCustomerId,
             monthlySubscription: b.monthlySubscription,
+            subscriptionValidTill: b.subscriptionValidTill,
             id: b.id
         });
         setOwnedCredits(b._count.Credit);
@@ -236,7 +241,14 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     };
 
     return (<InfoContext.Provider
-        value={{ user, qrList, ownedCredits, usedCredits, isMonthlySuber, isBusy, updateQr, updateUser, createQr, infoReload: infomationGrab, changeQrStatus}}
+        value={{ 
+            user, qrList, ownedCredits, 
+            usedCredits, isMonthlySuber, isBusy, 
+            billingPortal,
+            updateQr, updateUser, createQr, 
+            infoReload: infomationGrab, 
+            changeQrStatus
+        }}
     >{children}</InfoContext.Provider>)
 };
 

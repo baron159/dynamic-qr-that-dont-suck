@@ -126,7 +126,7 @@ app.on(['get', 'put', 'post'], '/api/auth/info', async c => {
                 }
             });
             c.executionCtx.waitUntil(client.$disconnect());
-            return c.json({ user }, 200);
+            return c.json({ user, billingPortal: c.env.STRIPE_CUSTOMER_PORTAL }, 200);
         case 'POST':
         case 'PUT':
             const data = await c.req.json() as {phone?:string, name?:string};
