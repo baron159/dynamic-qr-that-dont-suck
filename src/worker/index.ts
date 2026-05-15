@@ -350,6 +350,8 @@ export default {
          * Check the latest subscription status
          * - if no reneual, turn off all QRs. Remove parts in user obj
          * - if yes, update the 'until' column with the latest
+         * 
+         * NOTE -- It may be better to watch the `invoice.payment_succeeded` hook
          */
     }
 };

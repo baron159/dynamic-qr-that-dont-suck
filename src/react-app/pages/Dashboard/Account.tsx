@@ -13,15 +13,16 @@ export function AccountPane() {
     const [name, setName] = useInputState('');
     const [phone, setPhone] = useInputState('');
     const [supportMod, setSupportFlag] = useState(false);
-    if (!user) {
-        return (<Text>No user signed in!</Text>)
-    }
 
     useEffect(()=> {
         if(!user) return;
         setName(user.name);
         setPhone(user.phone || '')
-    }, [user])
+    }, [user]);
+
+    if (!user) {
+        return (<Text>No user signed in!</Text>)
+    }
 
     const disableSave = () => {
         if (user.name !== name) return false;

@@ -1,13 +1,14 @@
 import { useAuth } from "./contexts/auth.ctx";
-import { Group, Button, Switch } from "@mantine/core";
+import { Group, Button, Switch, useMantineColorScheme, ActionIcon } from "@mantine/core";
 import { useLocation } from "wouter";
 import { useState } from 'react';
 import styles from './header.module.css';
-import { SunIcon, MoonStarsIcon } from '@phosphor-icons/react';
+import { SunIcon, MoonStarsIcon, XIcon } from '@phosphor-icons/react';
 
 
 export default function Header() {
     const [path, nav] = useLocation();
+    const { colorScheme, setColorScheme } = useMantineColorScheme();
     const { isAuthenticated, signout } = useAuth();
     const [systemMsgs, setSysMsgs] = useState<string[]>([
         'Desktop Browser is currently the recommended way of using the App, we are working out a few things in the Mobile view'
@@ -42,6 +43,8 @@ export default function Header() {
                     color="dark.4"
                     onLabel={<SunIcon size={16} color="var(--mantine-color-yellow-4)" />}
                     offLabel={<MoonStarsIcon size={16} color="var(--mantine-color-blue-6)" />}
+                    checked={colorScheme === 'dark'}
+                    onChange={() => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark')}
                 />
             </Group>
 
@@ -49,7 +52,11 @@ export default function Header() {
         {systemMsgs.map((msg, i) => {
             return (<div className={styles.sysBanner} key={`system_msg-${i}`}>
                 {msg}
-                X
+                <ActionIcon size='1.2rem' variant="outline" ml='1rem' onClick={()=>{
+                    setSysMsgs(prev => prev.filter(m => m !== msg))
+                }}>
+                    <XIcon size='0.8rem' />
+                </ActionIcon>
             </div>)
         })}
     </div>)
