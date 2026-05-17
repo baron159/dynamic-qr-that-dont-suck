@@ -119,6 +119,71 @@ export async function checkoutCompletedHandler(payload: Stripe.CheckoutSessionCo
     }
 };
 
+export async function invoicPaymentSuccessHandler(payload: Stripe.InvoicePaymentSucceededEvent.Data){
+    if(payload.object.billing_reason !== 'subscription_cycle'){
+        console.log('invoice payment success event recieved -- but the billing reason is not one we care about::', payload.object.billing_reason);
+        return;
+    };
+    const { tryGetContext } = await import('hono/context-storage');
+    const ctx = tryGetContext<{ Bindings: Env }>();
+    if (!ctx) throw Error('Unable to retrieve context');
+    try{
+        const sid = payload.object.parent?.subscription_details?.subscription as string;
+        if(!sid || sid === '') throw Error('Subscription ID is not present');
+        const subStatus = await checkSubscriptionStatus(sid);
+        const { InitDb } = await import('./db.client');
+        const client = await InitDb(ctx.env);
+        if(!subStatus.isActive){
+            // Should this be used to clear a subscription within our database???
+            console.info('Subscription is not active');
+            return;
+        } else {
+            if(!subStatus.endDate){
+                console.error('no end date found');
+                throw Error('Subscription status returned without a "endDate" present... unable to contiune with the process')
+            }
+            await client.user.updateMany({
+                where: { monthlySubscription: sid },
+                data: { subscriptionValidTill: subStatus.endDate }
+            });
+            console.info('User subscription has been extended');
+        }
+    } catch(error){
+        console.error(`[stripe.things::invoicePaymentSiccessHandler] Error occurred\n${error}`)
+    }
+}
+
+export async function subscriptionChangeHandler(payload: Stripe.CustomerSubscriptionUpdatedEvent.Data){
+    if(payload.object.status !== 'canceled'){
+        console.log('subscription change not canceled -- so we dont handle anything here');
+        return;
+    }
+    const { tryGetContext } = await import('hono/context-storage');
+    const ctx = tryGetContext<{ Bindings: Env }>();
+    if (!ctx) throw Error('Unable to retrieve context');
+    try {
+        const { InitDb } = await import('./db.client');
+        const client = await InitDb(ctx.env);
+        const sid = payload.object.items.data[0].subscription as string;
+        const uids = await client.user.updateManyAndReturn({
+            where: {monthlySubscription: sid},
+            data: { 
+                monthlySubscription: null,
+                subscriptionValidTill: null,
+            },
+            select: { id: true }
+        });
+        await client.qr.updateMany({
+            where: { userId: { in: uids.map(ii => ii.id) }},
+            data: { active: false }
+        });
+        console.log('[stripe.things::subscriptionChangeHandler] All user qrs have been deactivated.');
+        return;
+    } catch (error) {
+        console.error(`[stripe.things::subscriptionChangeHandler] Error occurred\n${error}`)
+    }
+}
+
 interface SubscriptionStatusResult {
     isActive: boolean;
     endDate: Date | null;

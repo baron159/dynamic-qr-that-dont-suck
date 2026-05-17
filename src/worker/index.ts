@@ -327,14 +327,22 @@ app.get("/l/:linkId", async (c) => {
 })
 
 app.all('/api/webhooks/stripe', async (c) => {
-    const { verifyWebhookSignature, checkoutCompletedHandler } = await import('./util/stripe.things');
+    const { verifyWebhookSignature, checkoutCompletedHandler, invoicPaymentSuccessHandler, subscriptionChangeHandler } = await import('./util/stripe.things');
     const sig = c.req.header('stripe-signature');
     if (!sig) throw new Error('Stripe signature not found');
     const body: Stripe.Event = await verifyWebhookSignature(await c.req.raw.text(), sig);
     switch (body.type) {
         case 'checkout.session.completed':
             console.log('checkout session hook hit');
-            c.executionCtx.waitUntil(checkoutCompletedHandler(body.data))
+            c.executionCtx.waitUntil(checkoutCompletedHandler(body.data));
+            break;
+        case 'invoice.payment_succeeded':
+            console.log('invoice payment succeeded');
+            c.executionCtx.waitUntil(invoicPaymentSuccessHandler(body.data));
+            break;
+        case 'customer.subscription.updated':
+            console.log('customer subscription update');
+            c.executionCtx.waitUntil(subscriptionChangeHandler(body.data));
             break;
         default:
             console.warn('UNKNOWN WEBHOOK HIT', body.type);
