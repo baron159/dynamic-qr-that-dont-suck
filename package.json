@@ -1,8 +1,9 @@
 {
-	"name": "vite-react-template",
-	"description": "A template for building a React application with Vite, Hono, and Cloudflare Workers",
+	"name": "better-dynamic-qr",
+	"description": "A app for providing better dynamic qr service.",
+	"version": "1.0.0",
 	"cloudflare": {
-		"label": "Vite React Template",
+		"label": "Better Dynamic QR",
 		"products": [
 			"Workers"
 		],
