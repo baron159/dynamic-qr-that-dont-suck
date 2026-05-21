@@ -380,19 +380,20 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
       {!!showFloatingSave && <ActionIcon size={64} radius={32} className={styles.floatingSaveBtn} onClick={handleSave}>
         <FloppyDiskBackIcon weight="duotone" size={48} />
       </ActionIcon>}
-      <Group justify="space-between" wrap='nowrap'>
-        <Title order={2} mb="md" flex={1}>QR Code Editor</Title>
+      <Group justify="space-between" wrap='nowrap' gap="xs">
+        <Title order={2} mb="md" flex={1} style={{ fontSize: 'clamp(1.25rem, 4vw, 1.75rem)' }}>QR Code Editor</Title>
         { !!qrObj && <Button
-          flex={1}
+          flex={{ base: 0, sm: 1 }}
           onClick={handleSave}
           leftSection={<FloppyDiskBackIcon weight='duotone' size={28} />}
+          visibleFrom="xs"
         >
           Save
         </Button>}
       </Group>
-      <Grid>
+      <Grid gap={{ base: 'sm', md: 'md' }}>
         {/* Controls Column */}
-        <Grid.Col span={{ base: 12, md: 7 }}>
+        <Grid.Col span={{ base: 12, md: 7 }} order={{ base: 2, md: 1 }}>
           <Accordion multiple defaultValue={["data"]}>
             {/* Data Section */}
             <Accordion.Item value="data">
@@ -640,8 +641,8 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
         </Grid.Col>
 
         {/* Preview Column */}
-        <Grid.Col span={{ base: 12, md: 5 }}>
-          <Paper withBorder p="md" pos="sticky" top={20}>
+        <Grid.Col span={{ base: 12, md: 5 }} order={{ base: 1, md: 2 }}>
+          <Paper withBorder p="md" className={styles.previewPaper}>
             <Stack align="center" gap="md">
               <Text fw={600} size="lg">Preview</Text>
               <Box
@@ -650,15 +651,24 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
                 className={styles.canvasBox}
               />
               <Text fw={600} size="sm" mt="md">Download</Text>
-              <Group>
-                <Button variant="light" onClick={() => handleDownload("png")}>PNG</Button>
-                <Button variant="light" onClick={() => handleDownload("jpeg")}>JPEG</Button>
-                <Button variant="light" onClick={() => handleDownload("svg")}>SVG</Button>
-                <Button variant="light" onClick={() => handleDownload("webp")}>WEBP</Button>
+              <Group justify="center" gap="xs">
+                <Button variant="light" size="xs" onClick={() => handleDownload("png")}>PNG</Button>
+                <Button variant="light" size="xs" onClick={() => handleDownload("jpeg")}>JPEG</Button>
+                <Button variant="light" size="xs" onClick={() => handleDownload("svg")}>SVG</Button>
+                <Button variant="light" size="xs" onClick={() => handleDownload("webp")}>WEBP</Button>
               </Group>
+              { !!qrObj && <Button
+                fullWidth
+                onClick={handleSave}
+                leftSection={<FloppyDiskBackIcon weight='duotone' size={24} />}
+                hiddenFrom="xs"
+              >
+                Save
+              </Button>}
             </Stack>
           </Paper>
         </Grid.Col>
+
       </Grid>
     </Box>
   );

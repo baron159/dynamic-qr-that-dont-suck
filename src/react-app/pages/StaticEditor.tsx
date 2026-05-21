@@ -4,7 +4,7 @@ import { QrEditor } from "../componets/qr.editor";
 
 export default function StaticEditor(){
 
-    return (<Paper shadow="xl" withBorder m={24} p={32}>
+    return (<Paper shadow="xl" withBorder m={{ base: 8, sm: 16, md: 24 }} p={{ base: 12, sm: 20, md: 32 }}>
         <Text component="div" ta={'center'}>
             <Typography>
                 <h3>Static Editor</h3>

@@ -19,11 +19,11 @@ function App() {
 
     return (
         <>
-            <AppShell header={{ height: 48, offset: true }}>
-                <AppShell.Header>
+            <AppShell header={{ height: { base: 96, sm: 80 }, offset: true }}>
+                <AppShell.Header withBorder={false}>
                     <Header />
                 </AppShell.Header>
-                <AppShell.Main style={{ minHeight: 'calc(100vh - 64px)' }}>
+                <AppShell.Main>
                     <Switch>
                         <Route path='/' component={Landing} />
                         <Route path="/login" component={EntryPage} />

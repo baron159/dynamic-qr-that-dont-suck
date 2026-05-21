@@ -5,10 +5,10 @@ import { QrPane } from "./QrPane";
 
 export function Dashboard() {
 
-    return (<Card w={{ base: '95%', md: '90%', lg: '85%' }} mx="auto" withBorder mt="2rem">
+    return (<Card w={{ base: '100%', sm: '95%', md: '90%', lg: '85%' }} mx="auto" withBorder mt={{ base: '0.5rem', sm: '2rem' }} p={{ base: 'sm', sm: 'md' }}>
         <Title order={1}>Dashboard</Title>
         <Tabs defaultValue={'qr'}>
-            <Tabs.List>
+            <Tabs.List grow>
                 <Tabs.Tab value="qr">QRs</Tabs.Tab>
                 <Tabs.Tab value="account">Account</Tabs.Tab>
             </Tabs.List>

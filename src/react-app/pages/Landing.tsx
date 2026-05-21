@@ -53,7 +53,7 @@ export default function Landing() {
                         "radial-gradient(ellipse at top, var(--mantine-color-blue-light) 0%, transparent 60%)",
                 }}
             >
-                <Container size="lg">
+                <Container size="lg" px={{ base: 'md', sm: 'xl' }}>
                     <Stack align="center" gap="lg" ta="center">
                         <Badge
                             size="lg"
@@ -65,7 +65,7 @@ export default function Landing() {
                         </Badge>
                         <Title
                             order={1}
-                            style={{ fontSize: rem(56), lineHeight: 1.05, maxWidth: 820 }}
+                            style={{ fontSize: 'clamp(2rem, 7vw, ' + rem(56) + ')', lineHeight: 1.05, maxWidth: 820 }}
                         >
                             Print once. Update forever.
                         </Title>
@@ -74,7 +74,7 @@ export default function Landing() {
                             poster, card, or shirt. Pay once per code or go unlimited — at a fraction
                             of what the other guys charge.
                         </Text>
-                        <Group mt="md">
+                        <Group mt="md" justify="center" w="100%">
                             <Button
                                 size="lg"
                                 onClick={goPrimary}
@@ -86,7 +86,7 @@ export default function Landing() {
                                 Try the editor — free
                             </Button>
                         </Group>
-                        <Group gap="xl" mt="sm" c="dimmed">
+                        <Group gap="md" mt="sm" c="dimmed" justify="center">
                             <Group gap={6}>
                                 <CheckIcon size={16} weight="bold" />
                                 <Text size="sm">No subscription required</Text>
@@ -105,8 +105,8 @@ export default function Landing() {
             </Box>
 
             {/* VALUE PROP */}
-            <Container size="lg" py={{ base: 48, md: 80 }}>
-                <SimpleGrid cols={{ base: 1, md: 2 }} spacing={48} verticalSpacing={48}>
+            <Container size="lg" py={{ base: 48, md: 80 }} px={{ base: 'md', sm: 'xl' }}>
+                <SimpleGrid cols={{ base: 1, md: 2 }} spacing={{ base: 24, md: 48 }} verticalSpacing={{ base: 24, md: 48 }}>
                     <Stack gap="md">
                         <Badge variant="light" color="grape" w="fit-content">
                             Why bother?
@@ -156,7 +156,7 @@ export default function Landing() {
 
             {/* FEATURES */}
             <Box bg="var(--mantine-color-default-hover)" py={{ base: 48, md: 80 }}>
-                <Container size="lg">
+                <Container size="lg" px={{ base: 'md', sm: 'xl' }}>
                     <Stack align="center" ta="center" mb="xl">
                         <Badge variant="light" color="blue">
                             Features
@@ -202,7 +202,7 @@ export default function Landing() {
             </Box>
 
             {/* PRICING */}
-            <Container size="lg" py={{ base: 48, md: 80 }} id="pricing">
+            <Container size="lg" py={{ base: 48, md: 80 }} px={{ base: 'md', sm: 'xl' }} id="pricing">
                 <Stack align="center" ta="center" mb="xl">
                     <Badge variant="light" color="teal">
                         Pricing
@@ -292,7 +292,7 @@ export default function Landing() {
 
             {/* FAQ */}
             <Box bg="var(--mantine-color-default-hover)" py={{ base: 48, md: 80 }}>
-                <Container size="sm">
+                <Container size="sm" px={{ base: 'md', sm: 'xl' }}>
                     <Stack align="center" ta="center" mb="lg">
                         <Badge variant="light" color="grape">
                             FAQ
@@ -364,7 +364,7 @@ export default function Landing() {
             </Box>
 
             {/* CTA */}
-            <Container size="md" py={{ base: 48, md: 80 }}>
+            <Container size="md" py={{ base: 48, md: 80 }} px={{ base: 'md', sm: 'xl' }}>
                 <Card
                     withBorder
                     radius="lg"
@@ -413,11 +413,11 @@ export default function Landing() {
 
 function CompareRow({ left, right }: { left: string; right: string }) {
     return (
-        <Group justify="space-between" align="flex-start">
-            <Text c="dimmed" style={{ textDecoration: "line-through" }} maw={"45%"}>
+        <Group justify="space-between" align="flex-start" wrap="nowrap" gap="xs">
+            <Text c="dimmed" style={{ textDecoration: "line-through", flex: 1 }} size="sm">
                 {left}
             </Text>
-            <Text fw={500} ta="right" maw={"45%"}>
+            <Text fw={500} ta="right" size="sm" style={{ flex: 1 }}>
                 {right}
             </Text>
         </Group>

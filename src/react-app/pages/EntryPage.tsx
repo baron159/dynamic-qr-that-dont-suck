@@ -37,8 +37,8 @@ export default function EntryPage() {
         }
     }
 
-    return (<Container py="2rem">
-        <Card w={{ base: '70%', md: '50%', lg: '40%' }} withBorder mx="auto">
+    return (<Container py={{ base: '1rem', sm: '2rem' }} px={{ base: 'sm', sm: 'md' }}>
+        <Card w={{ base: '100%', sm: '70%', md: '50%', lg: '40%' }} withBorder mx="auto">
             <Stack>
                 <Title order={3} ta="center">Better QR - {inCreateMode ? 'Create Account' : 'Sign In'}</Title>
                 <TextInput label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />

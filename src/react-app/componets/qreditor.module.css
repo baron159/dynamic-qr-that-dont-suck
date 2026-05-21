@@ -1,13 +1,38 @@
 
 .floatingSaveBtn {
     position: fixed !important;
-    right: 2rem;
-    bottom: 4rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 100;
+}
+
+@media (min-width: 48em) {
+    .floatingSaveBtn {
+        right: 2rem;
+        bottom: 4rem;
+    }
 }
 
 .canvasBox {
-    canvas {
-        max-width: 350px;
-        max-height: 350px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.canvasBox canvas,
+.canvasBox svg {
+    max-width: min(350px, 100%);
+    max-height: 350px;
+    height: auto;
+}
+
+.previewPaper {
+    width: 100%;
+}
+
+@media (min-width: 62em) {
+    .previewPaper {
+        position: sticky;
+        top: 90px;
     }
 }

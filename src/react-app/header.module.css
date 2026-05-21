@@ -8,3 +8,10 @@
     color: floralwhite;
     text-align: center;
 }
+
+@media (max-width: 48em) {
+    .sysBanner {
+        font-size: 0.75rem;
+        padding: 0.25rem;
+    }
+}

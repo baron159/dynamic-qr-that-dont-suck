@@ -63,7 +63,7 @@ export function AccountPane() {
 
     return (<>
         <SubmitSupportTicket showModel={supportMod} onClose={() => { setSupportFlag(false) }} />
-        <Container>
+        <Container px={{ base: 0, sm: 'md' }}>
             <Title order={3}>Account</Title>
             <Text c={'dimmed'}>Your User ID: <Text span c='purple' size='1.2rem'>{user.id}</Text> can be handy sending with support messages</Text>
             <TextInput
@@ -98,7 +98,7 @@ export function AccountPane() {
             <Button fullWidth onClick={!!user.monthlySubscription ? gotoManageSubscription : startSubscription}>
                 {!!user.monthlySubscription ? 'Manage Subscription' : 'Start Subscription ($9.95 per month -or- $99 for the year)'}
             </Button>
-            <Group justify="space-evenly" mt={'2rem'}>
+            <Group justify="space-evenly" mt={'2rem'} grow>
                 <Button color='orange'>Change Password</Button>
                 <Button onClick={() => setSupportFlag(true)}>Support Form</Button>
             </Group>

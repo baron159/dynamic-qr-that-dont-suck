@@ -24,11 +24,11 @@ export default function CreditPurchaseKicker() {
 
     return (<Stack gap={8} ta={'center'}>
         <Text size="1.2rem">Purchase Credits</Text>
-        <Group wrap='nowrap'>
+        <Group wrap='nowrap' gap="xs">
             <NumInput defaultVal={num} onChanged={setNum} />
-            <Button loading={loading} onClick={startPurchase} w={'25%'}>Buy</Button>
+            <Button loading={loading} onClick={startPurchase}>Buy</Button>
             <Popover withArrow width={350}>
-                <Popover.Target><InfoIcon size={48} weight="duotone" /></Popover.Target>
+                <Popover.Target><InfoIcon size={32} weight="duotone" style={{ cursor: 'pointer', flexShrink: 0 }} /></Popover.Target>
                 <Popover.Dropdown>
                     <Text>
                         Credits are good for a lifetime of dynamic QR routes. These are really good
