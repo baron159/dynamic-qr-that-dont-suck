@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.7.0",
-  "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
+  "clientVersion": "7.8.0",
+  "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "sqlite",
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider   = \"prisma-client\"\n  output     = \"./generated\"\n  engineType = \"client\"\n  runtime    = \"cloudflare\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel User {\n  id                    String    @id @default(cuid(2))\n  email                 String    @unique\n  passHash              String\n  name                  String\n  phone                 String?\n  stripeCustomerId      String?\n  monthlySubscription   String? // Users can have\n  subscriptionValidTill DateTime?\n  Qr                    Qr[]\n  Credit                Credit[]\n  createdAt             DateTime  @default(now())\n  updatedAt             DateTime  @updatedAt\n}\n\nmodel Qr {\n  id           String   @id @default(uuid(7))\n  // The full url that the QR is pointing to\n  kvId         String   @unique\n  nickname     String   @default(\"QR Dynamics\")\n  active       Boolean  @default(false)\n  redirectLink String\n  scanCount    Int      @default(0)\n  options      Json? // == QRCodeStyling minus the 'data'\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  User     User    @relation(fields: [userId], references: [id])\n  Credit   Credit? @relation(fields: [creditId], references: [id])\n  userId   String\n  creditId String? // Optional because a subscription QR doesn't have a credit\n}\n\n// Credits are one-time purchased credits that can be used to create QR codes\nmodel Credit {\n  id             String   @id @default(uuid(7))\n  userId         String\n  shopifyOrderId String\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt // This can be removed... it will never be modified\n\n  User User @relation(fields: [userId], references: [id])\n  Qr   Qr[]\n}\n",
   "runtimeDataModel": {
@@ -176,7 +176,7 @@ export interface PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => runtime.Types.Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<R>
 

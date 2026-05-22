@@ -1,10 +1,10 @@
-import { Group, Grid, Text, Button, Stack, Divider, TextInput, ActionIcon } from "@mantine/core";
+import { Group, Grid, Text, Button, Stack, Divider, TextInput } from "@mantine/core";
 import { QrEditor } from "../../componets/qr.editor";
 import CreditPurchaseKicker from "../../componets/credit.purchase.kicker";
 import { useInfo } from "../../contexts/info.ctx";
 import { useState } from "react";
 import { Qr } from "pc/browser.ts";
-import { PlusIcon, FloppyDiskBackIcon } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { useInputState } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 

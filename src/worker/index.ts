@@ -352,7 +352,7 @@ app.all('/api/webhooks/stripe', async (c) => {
 
 export default {
     fetch: app.fetch,
-    scheduled: async( ctn:ScheduledController, env:Env, ctx:ExecutionContext )=>{
+    scheduled: async( _ctn:ScheduledController, _env:Env, _ctx:ExecutionContext )=>{
         /**
          * Need to check for invalid subscriber dates
          * Check the latest subscription status

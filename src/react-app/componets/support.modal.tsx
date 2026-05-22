@@ -72,7 +72,7 @@ export function SubmitSupportTicket(params: SupportTicketModelParams) {
                             params.onClose();
                             close()
                         }}>Cancel</Button>
-                        <Button onClick={sendHandler}>Submit</Button>
+                        <Button onClick={sendHandler} loading={busy}>Submit</Button>
                     </Group>
 
                 </Card>

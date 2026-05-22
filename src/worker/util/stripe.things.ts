@@ -13,17 +13,17 @@ async function stripeClient(secret: string) {
     });
 }
 
-function resolveReturnUrl(appHost: string, given?: string): string {
-    const base = appHost.replace(/\/$/, "");
-    if (!given) {
-        return `${base}/dashboard`;
-    }
-    try {
-        return new URL(given).href;
-    } catch {
-        return new URL(given, base).href;
-    }
-}
+// function resolveReturnUrl(appHost: string, given?: string): string {
+//     const base = appHost.replace(/\/$/, "");
+//     if (!given) {
+//         return `${base}/dashboard`;
+//     }
+//     try {
+//         return new URL(given).href;
+//     } catch {
+//         return new URL(given, base).href;
+//     }
+// }
 
 /**
  * Creates an embedded Checkout Session for the Stripe Price with lookup key `dynamic-credit`.

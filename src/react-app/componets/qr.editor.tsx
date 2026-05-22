@@ -343,6 +343,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
         }
       })
       .catch(r => {
+        console.log(`Caught an error:: ${r}`)
         whoManipulatedActivation.current = 'effect';
         setActivated(prev => !prev); // Change failed. Flip the state.
       })

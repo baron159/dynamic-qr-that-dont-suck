@@ -97,7 +97,7 @@ export default function Landing() {
                             </Group>
                             <Group gap={6}>
                                 <CheckIcon size={16} weight="bold" />
-                                <Text size="sm">Built on Cloudflare</Text>
+                                <Text size="sm">Robust Editor</Text>
                             </Group>
                         </Group>
                     </Stack>
@@ -127,7 +127,7 @@ export default function Landing() {
                         >
                             <List.Item>Edit the destination URL anytime</List.Item>
                             <List.Item>Fully styled QR codes (colors, gradients, logos)</List.Item>
-                            <List.Item>Pass-through data for context-aware redirects</List.Item>
+                            <List.Item>Pass-through data for context-aware redirects with premium</List.Item>
                             <List.Item>Host files behind a code with our premium plan</List.Item>
                         </List>
                     </Stack>
@@ -147,7 +147,7 @@ export default function Landing() {
                             />
                             <Divider />
                             <Text c="teal" fw={600} ta="center">
-                                Save $220+ in your first year
+                                Save $220+ in your first year, compared to the other guys
                             </Text>
                         </Stack>
                     </Card>
@@ -174,12 +174,12 @@ export default function Landing() {
                         />
                         <Feature
                             icon={<LightningIcon size={22} weight="duotone" />}
-                            title="Dynamicly-dynamic"
+                            title="Dynamicly-dynamic*"
                             desc="Pass parameters through the redirect for unique-scan tracking, date-driven links, and more."
                         />
                         <Feature
                             icon={<CloudArrowUpIcon size={22} weight="duotone" />}
-                            title="File hosting"
+                            title="File hosting*"
                             desc="Premium codes can host up to 1 GB of files each. Menus, PDFs, downloads — just drop them in."
                         />
                         <Feature
@@ -198,6 +198,7 @@ export default function Landing() {
                             desc="One-time credits don't expire. Cancel a subscription and your one-time codes keep working."
                         />
                     </SimpleGrid>
+                    <Text c='dimmed' ta={'center'}>* Coming soon, Premium features</Text>
                 </Container>
             </Box>
 
@@ -478,17 +479,17 @@ function PriceCard({
             p="xl"
             shadow={highlight ? "lg" : "sm"}
             style={{
-                borderColor: highlight ? "var(--mantine-color-blue-filled)" : undefined,
+                borderColor: highlight ? "var(--mantine-primary-color-filled)" : undefined,
                 borderWidth: highlight ? 2 : undefined,
                 position: "relative",
             }}
         >
             {highlight && (
                 <Badge
-                    color="blue"
-                    style={{ position: "absolute", top: -12, right: 16 }}
+                    color="var(--mantine-primary-color-filled)"
+                    style={{ position: "absolute", top: 0, right: 16 }}
                 >
-                    Most popular
+                    Selected
                 </Badge>
             )}
             <Stack gap="md" h="100%" justify="space-between">

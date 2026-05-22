@@ -11,7 +11,7 @@ export default function Header() {
     const { colorScheme, setColorScheme } = useMantineColorScheme();
     const { isAuthenticated, signout } = useAuth();
     const [systemMsgs, setSysMsgs] = useState<string[]>([
-        'Desktop Browser is currently the recommended way of using the App, we are working out a few things in the Mobile view'
+        'Did you buy -or- subscribe and not see changes on your account? Try refreshing'
     ]);
 
     return (<div>

@@ -84,7 +84,7 @@ export const InfoProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         injectHeader(req);
         const res = await fetch(req);
         if(res.status === 200){
-            // ts-ignore --- I believe this is fine, for how it will be used
+            // @ts-ignore --- I believe this is fine, for how it will be used
             setUser(prev => {
                 return {...prev, ...up}
             });

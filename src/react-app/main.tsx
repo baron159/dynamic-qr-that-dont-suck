@@ -10,10 +10,13 @@ import '@mantine/notifications/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 
+// Bring in the theme
+import { DynoQrTheme } from './theme.ts';
+
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<MantineProvider defaultColorScheme="auto">
+		<MantineProvider defaultColorScheme="auto" theme={DynoQrTheme}>
 			<Notifications />
 			<AuthProvider>
 				<InfoProvider>

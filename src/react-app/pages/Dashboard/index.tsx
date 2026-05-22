@@ -1,4 +1,4 @@
-import { Title, Card, Tabs, Text, Group } from "@mantine/core";
+import { Title, Card, Tabs, } from "@mantine/core";
 import { AccountPane } from "./Account";
 import { QrPane } from "./QrPane";
 
