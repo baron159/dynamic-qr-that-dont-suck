@@ -1,7 +1,7 @@
 {
 	"name": "better-dynamic-qr",
 	"description": "A app for providing better dynamic qr service.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"cloudflare": {
 		"label": "Better Dynamic QR",
 		"products": [

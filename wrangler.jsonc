@@ -6,7 +6,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "dynamic-qr-that-dont-suck",
 	"main": "./src/worker/index.ts",
-	"compatibility_date": "2025-10-08",
+	"compatibility_date": "2026-05-26",
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
@@ -46,15 +46,14 @@
 	],
 	"routes": [
 		{
-			"pattern": "qrs.best",
-			"zone_name": "qrs.best",
+			"pattern": "app.qrs.best",
 			"custom_domain": true,
 			"enabled": true,
 			"previews_enabled": false
 		}
 	],
 	"vars": {
-		"APP_HOST": "https://qrs.best",
+		"APP_HOST": "https://app.qrs.best",
 		"STRIPE_CUSTOMER_PORTAL": "https://billing.stripe.com/p/login/eVqcN41Cz6k96i1b705AQ00",
 		"STRIPE_PUB_KEY": "pk_live_51McDI6AARpXaxUagOw7zRmFFSHZZiLg6KPHZyfL0dSj6Tl9ckcQPdqh0X6UBLsCkVALizhMNmiKgs9uLMm4AkUGt00QEp1iX6I"
 	}

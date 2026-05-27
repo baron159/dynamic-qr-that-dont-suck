@@ -309,21 +309,21 @@ app.get("/l/:linkId", async (c) => {
     if (!rl) {
         return c.text('deactivated or unknown location', 404);
         // KV is persistant enough that we can rely on it soley
-        // const { InitDb } = await import('./util/db.client');
-        // const client = await InitDb(c.env);
-        // const qr = await client.qr.findFirst({
-        //     where: { kvId: kvid, active: true },
-        // });
-        // if (!qr) {
-        //     return c.text("unknown", 404);
-        // }
-        // c.executionCtx.waitUntil(client.$disconnect());
-        // const putIntoKv = async () => {
-        //     await c.env.KV.put(kvid, qr.redirectLink!, { expirationTtl: 30 });
-        // }
-        // c.executionCtx.waitUntil(putIntoKv());
-        // return c.redirect(qr.redirectLink, 301);
-    } else return c.redirect(rl, 301);
+    }
+
+    // Add 1 to scan count
+    c.executionCtx.waitUntil((async () => {
+        const { InitDb } = await import('./util/db.client');
+        const client = await InitDb(c.env);
+        await client.qr.updateMany({
+            where: { kvId: { contains: kvid, }},
+            data: { scanCount: { increment: 1 }}
+        });
+        c.executionCtx.waitUntil(client.$disconnect());
+        return;
+    })())
+    
+    return c.redirect(rl, 301);
 })
 
 app.all('/api/webhooks/stripe', async (c) => {

@@ -357,7 +357,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   }, [buildOptions]);
 
   useEffect(() => {
-    if(!!sendTo && !qrObj){
+    if (!!sendTo && !qrObj) {
       setData(sendTo)
     }
   }, [sendTo])
@@ -383,7 +383,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
       </ActionIcon>}
       <Group justify="space-between" wrap='nowrap'>
         <Title order={2} mb="md" flex={1}>QR Code Editor</Title>
-        { !!qrObj && <Button
+        {!!qrObj && <Button
           flex={1}
           onClick={handleSave}
           leftSection={<FloppyDiskBackIcon weight='duotone' size={28} />}
@@ -403,7 +403,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
                   The most important information. QR data, activation status, and a nickname for your refrence!
                 </Text>
                 <Stack gap="sm">
-                  { !!qrObj && <TextInput
+                  {!!qrObj && <TextInput
                     label="Nickname"
                     value={nickname}
                     onChange={(e) => setNickname(e.currentTarget.value)}
@@ -643,19 +643,34 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
         {/* Preview Column */}
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Paper withBorder p="md" pos="sticky" top={20}>
-            <Stack align="center" gap="md">
+            <Stack align="center" gap="0">
               <Text fw={600} size="lg">Preview</Text>
               <Box
                 ref={containerRef}
                 style={{ display: "flex", justifyContent: "center" }}
                 className={styles.canvasBox}
               />
-              <Text fw={600} size="sm" mt="md">Download</Text>
+              <Text fw={600} size="sm" mt="md" mb="sm">Download</Text>
               <Group>
                 <Button variant="light" onClick={() => handleDownload("png")}>PNG</Button>
                 <Button variant="light" onClick={() => handleDownload("jpeg")}>JPEG</Button>
                 <Button variant="light" onClick={() => handleDownload("svg")}>SVG</Button>
                 <Button variant="light" onClick={() => handleDownload("webp")}>WEBP</Button>
+              </Group>
+              <Text fw={600} size="sm" mt="0">Stats</Text>
+              <Group justify='space-between' mt='0'>
+                <Text c='dimmed' size='0.9rem'>Scan Count</Text>
+                <Text size='1.2rem'>{qrObj?.scanCount || 0}</Text>
+              </Group>
+              <Group justify='space-between' mt='0'>
+                <Text c='dimmed' size='0.9rem'>Updated</Text>
+                <Text size='1.2rem'>{qrObj?.updatedAt.toLocaleString('en-US', {
+                  year: '2-digit',
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                }) || 'N/A'}</Text>
               </Group>
             </Stack>
           </Paper>

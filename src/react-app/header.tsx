@@ -20,7 +20,7 @@ export default function Header() {
                 variant={path === '/' ? 'light' : 'subtle'}
                 onClick={() => nav('/')}
                 ml={'3rem'}
-            >Better DynoQs</Button>
+            >Best QRs</Button>
             <Group justify="end" gap='2rem' mr='1.5rem'>
                 <Button
                     variant={path.includes('static-editor') ? 'light' : 'subtle'}
