@@ -17,7 +17,8 @@
 	"assets": {
 		"run_worker_first": [
 			"/l/*",
-			"/api/*"
+			"/api/*",
+			"/f/*"
 		],
 		"directory": "./dist/client",
 		"not_found_handling": "single-page-application"

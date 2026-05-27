@@ -20,12 +20,17 @@ import {
   Text,
   TextInput,
   Title,
-  ActionIcon
+  ActionIcon,
+  Progress,
+  Anchor
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import type { Qr } from "pc/browser.ts";
 import { useInfo } from '../contexts/info.ctx.tsx';
-import { InfoIcon, FloppyDiskBackIcon } from '@phosphor-icons/react';
+import { useAuth } from '../contexts/auth.ctx.tsx';
+import { InfoIcon, FloppyDiskBackIcon, PaperclipIcon } from '@phosphor-icons/react';
 import { deepCopy } from "../util/obj.ops.ts";
+import { uploadFileMultipart, MAX_FILE_BYTES, type UploadProgress } from "../util/file.upload.ts";
 
 import styles from './qreditor.module.css';
 
@@ -177,6 +182,13 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { changeQrStatus, updateQr } = useInfo();
+  const { injectHeader, isAuthenticated } = useAuth();
+
+  // Attached file state
+  const [attachFile, setAttachFile] = useState<File | null>(null);
+  const [attachUploading, setAttachUploading] = useState(false);
+  const [attachProgress, setAttachProgress] = useState<UploadProgress | null>(null);
+  const [attachedUrl, setAttachedUrl] = useState<string | null>(null);
 
   // Basic Data
   const [data, setData] = useState("https://example.com"); // THIS IS OUR Origin, and CANT be changed
@@ -270,6 +282,12 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
     setMode(bb?.qrOptions?.mode || "Byte");
     setErrorCorrection(bb?.qrOptions?.errorCorrectionLevel || "Q");
 
+    // Detect a previously attached file by inspecting the redirect link
+    if (qrObj.redirectLink && /\/f\/files\//.test(qrObj.redirectLink)) {
+      setAttachedUrl(qrObj.redirectLink);
+    } else {
+      setAttachedUrl(null);
+    }
   }, [qrObj])
 
   // Handle image file changes
@@ -366,6 +384,47 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
     qrRef.current?.download({ extension, name: `${nickname.replace(' ', '_')}` });
   };
 
+  const handleUploadAndAttach = async () => {
+    if (!attachFile) return;
+    if (!qrObj) {
+      notifications.show({ title: 'Save the QR first', message: 'Create the QR before attaching a file.', color: 'orange', withBorder: true });
+      return;
+    }
+    if (!isAuthenticated) {
+      notifications.show({ title: 'Sign in required', message: 'You must be signed in to upload a file.', color: 'red', withBorder: true });
+      return;
+    }
+    if (attachFile.size > MAX_FILE_BYTES) {
+      notifications.show({ title: 'File too large', message: 'Files must be 1 GB or smaller.', color: 'red', withBorder: true });
+      return;
+    }
+    setAttachUploading(true);
+    setAttachProgress({ sentBytes: 0, totalBytes: attachFile.size, partNumber: 0, totalParts: Math.max(1, Math.ceil(attachFile.size / (10 * 1024 * 1024))) });
+    try {
+      const result = await uploadFileMultipart(attachFile, injectHeader, (p) => setAttachProgress(p));
+      setAttachedUrl(result.url);
+      setSendTo(result.url);
+      // Persist the new redirect link on the QR so scans go to the file.
+      const baseValues = deepCopy(qrObj, 'createdAt', 'active', 'kvId', 'scanCount', 'updatedAt', 'userId', 'creditId');
+      baseValues.options = deepCopy(buildOptions(), 'image');
+      baseValues.redirectLink = result.url;
+      baseValues.nickname = nickname;
+      await updateQr(baseValues.id, baseValues);
+      notifications.show({ title: 'File attached', message: 'Your QR will now serve the uploaded file.', withBorder: true });
+      setAttachFile(null);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      notifications.show({ title: 'Upload failed', message, color: 'red', withBorder: true });
+    } finally {
+      setAttachUploading(false);
+    }
+  };
+
+  const handleDetachFile = () => {
+    setAttachedUrl(null);
+    setSendTo('https://example.com');
+  };
+
   const handleSave = async () => {
     if (!qrObj) return; // No QR object present
     const baseValues = deepCopy(qrObj, 'createdAt', 'active', 'kvId', 'scanCount', 'updatedAt', 'userId', 'creditId');
@@ -415,6 +474,65 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
                     onChange={(e) => setSendTo(e.currentTarget.value)}
                     placeholder="https://example.com"
                   />
+                  {!!qrObj && (
+                    <Stack gap='xs'>
+                      <Group justify="space-between" wrap="nowrap">
+                        <Text size="sm" fw={500}>Attach a File</Text>
+                        <Popover withArrow width={350}>
+                          <Popover.Target><InfoIcon size={22} weight="duotone" /></Popover.Target>
+                          <Popover.Dropdown>
+                            <Text size='sm'>
+                              Upload a file (up to 1 GB) and host it on our servers. The QR will redirect
+                              scanners straight to the file. Uploading a new file replaces the current
+                              redirect URL with the file's hosted URL.
+                            </Text>
+                          </Popover.Dropdown>
+                        </Popover>
+                      </Group>
+                      {attachedUrl && (
+                        <Group justify="space-between" wrap="nowrap" gap='xs'>
+                          <Text size='sm' c='dimmed' style={{ wordBreak: 'break-all' }}>
+                            Attached: <Anchor href={attachedUrl} target='_blank' rel='noreferrer'>{attachedUrl}</Anchor>
+                          </Text>
+                          <Button size='xs' variant='subtle' color='red' onClick={handleDetachFile} disabled={attachUploading}>
+                            Detach
+                          </Button>
+                        </Group>
+                      )}
+                      <Group align='end' wrap='nowrap'>
+                        <FileInput
+                          label='File (max 1 GB)'
+                          value={attachFile}
+                          onChange={setAttachFile}
+                          placeholder='Choose a file to upload'
+                          clearable
+                          disabled={attachUploading}
+                          w='100%'
+                        />
+                        <Button
+                          onClick={handleUploadAndAttach}
+                          disabled={!attachFile || attachUploading}
+                          loading={attachUploading}
+                          leftSection={<PaperclipIcon weight='duotone' size={18} />}
+                        >
+                          Upload & Attach
+                        </Button>
+                      </Group>
+                      {attachUploading && attachProgress && (
+                        <Stack gap={4}>
+                          <Progress
+                            value={Math.min(100, (attachProgress.sentBytes / Math.max(1, attachProgress.totalBytes)) * 100)}
+                            animated
+                          />
+                          <Text size='xs' c='dimmed'>
+                            Part {attachProgress.partNumber}/{attachProgress.totalParts} —{' '}
+                            {(attachProgress.sentBytes / (1024 * 1024)).toFixed(1)} MB of{' '}
+                            {(attachProgress.totalBytes / (1024 * 1024)).toFixed(1)} MB
+                          </Text>
+                        </Stack>
+                      )}
+                    </Stack>
+                  )}
                   {/* *** The activation is a dynamic QR option *** */}
                   {!!qrObj && <><Text size="1.1rem">Activation Status</Text>
                     <Group justify="space-between">

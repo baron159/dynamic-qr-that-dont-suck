@@ -276,6 +276,149 @@ app.all('/api/auth/qr/:linkId');
 // Route for getting the QR
 app.get('/api/qr/:linkId')
 
+const MAX_FILE_BYTES = 1024 * 1024 * 1024; // 1 GB
+
+function sanitizeFilename(name: string): string {
+    return name.replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 120) || 'file';
+}
+
+function fileKeyOwnerPrefix(userId: string): string {
+    return `files/${userId}/`;
+}
+
+// Start a multipart upload for a file to attach to a QR
+app.post('/api/auth/files/start', async (c) => {
+    const payload = c.get('jwtPayload') as JwtPayload;
+    const body = await c.req.json() as { filename: string; contentType?: string; size: number };
+    if (typeof body.size !== 'number' || body.size <= 0) {
+        return c.json({ error: 'Invalid size' }, 400);
+    }
+    if (body.size > MAX_FILE_BYTES) {
+        return c.json({ error: 'File too large (max 1GB)' }, 413);
+    }
+    const { createId } = await import('./util/ids');
+    const fileId = createId();
+    const safeName = sanitizeFilename(body.filename || 'file');
+    const key = `${fileKeyOwnerPrefix(payload.userId)}${fileId}/${safeName}`;
+    const upload = await c.env.R2.createMultipartUpload(key, {
+        httpMetadata: body.contentType ? { contentType: body.contentType } : undefined,
+        customMetadata: { uploaderUserId: payload.userId, originalFilename: safeName },
+    });
+    return c.json({
+        key,
+        uploadId: upload.uploadId,
+        url: `${c.env.APP_HOST}/f/${key}`,
+    }, 200);
+});
+
+// Upload a single part of a multipart upload. Body is the raw bytes of the part.
+app.put('/api/auth/files/part', async (c) => {
+    const payload = c.get('jwtPayload') as JwtPayload;
+    const key = c.req.query('key');
+    const uploadId = c.req.query('uploadId');
+    const partNumberStr = c.req.query('partNumber');
+    if (!key || !uploadId || !partNumberStr) {
+        return c.json({ error: 'key, uploadId, partNumber are required' }, 400);
+    }
+    if (!key.startsWith(fileKeyOwnerPrefix(payload.userId))) {
+        return c.json({ error: 'forbidden' }, 403);
+    }
+    const partNumber = parseInt(partNumberStr, 10);
+    if (!Number.isFinite(partNumber) || partNumber < 1) {
+        return c.json({ error: 'Invalid partNumber' }, 400);
+    }
+    const body = c.req.raw.body;
+    if (!body) return c.json({ error: 'Missing body' }, 400);
+    const upload = c.env.R2.resumeMultipartUpload(key, uploadId);
+    const uploaded = await upload.uploadPart(partNumber, body);
+    return c.json(uploaded, 200);
+});
+
+// Complete a multipart upload and return the public URL
+app.post('/api/auth/files/complete', async (c) => {
+    const payload = c.get('jwtPayload') as JwtPayload;
+    const body = await c.req.json() as { key: string; uploadId: string; parts: { partNumber: number; etag: string }[] };
+    if (!body.key || !body.uploadId || !Array.isArray(body.parts) || body.parts.length === 0) {
+        return c.json({ error: 'key, uploadId and parts are required' }, 400);
+    }
+    if (!body.key.startsWith(fileKeyOwnerPrefix(payload.userId))) {
+        return c.json({ error: 'forbidden' }, 403);
+    }
+    const upload = c.env.R2.resumeMultipartUpload(body.key, body.uploadId);
+    const obj = await upload.complete(body.parts);
+    if (obj.size > MAX_FILE_BYTES) {
+        await c.env.R2.delete(body.key);
+        return c.json({ error: 'File exceeds 1GB limit' }, 413);
+    }
+    return c.json({
+        key: body.key,
+        size: obj.size,
+        etag: obj.httpEtag,
+        url: `${c.env.APP_HOST}/f/${body.key}`,
+    }, 200);
+});
+
+// Abort a multipart upload
+app.post('/api/auth/files/abort', async (c) => {
+    const payload = c.get('jwtPayload') as JwtPayload;
+    const body = await c.req.json() as { key: string; uploadId: string };
+    if (!body.key || !body.uploadId) return c.json({ error: 'key, uploadId required' }, 400);
+    if (!body.key.startsWith(fileKeyOwnerPrefix(payload.userId))) {
+        return c.json({ error: 'forbidden' }, 403);
+    }
+    const upload = c.env.R2.resumeMultipartUpload(body.key, body.uploadId);
+    await upload.abort();
+    return c.json({ ok: true }, 200);
+});
+
+// Public route to serve a file from R2. The first path segment after /f/ is the
+// owner userId; the rest forms the rest of the R2 key.
+app.get('/f/*', async (c) => {
+    const path = new URL(c.req.url).pathname;
+    const key = decodeURIComponent(path.replace(/^\/f\//, ''));
+    if (!key || !key.startsWith('files/')) {
+        return c.text('not found', 404);
+    }
+    const rangeHeader = c.req.header('range');
+    const getOpts: R2GetOptions = {};
+    if (rangeHeader) {
+        // Let R2 handle range parsing via the Range header semantics.
+        const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader);
+        if (match) {
+            const start = match[1] === '' ? undefined : parseInt(match[1], 10);
+            const end = match[2] === '' ? undefined : parseInt(match[2], 10);
+            if (start !== undefined && end !== undefined) {
+                getOpts.range = { offset: start, length: end - start + 1 };
+            } else if (start !== undefined) {
+                getOpts.range = { offset: start };
+            } else if (end !== undefined) {
+                getOpts.range = { suffix: end };
+            }
+        }
+    }
+    const obj = await c.env.R2.get(key, getOpts);
+    if (!obj) return c.text('not found', 404);
+    const headers = new Headers();
+    obj.writeHttpMetadata(headers);
+    headers.set('etag', obj.httpEtag);
+    headers.set('accept-ranges', 'bytes');
+    headers.set('cache-control', 'public, max-age=31536000, immutable');
+    const filename = obj.customMetadata?.originalFilename;
+    if (filename && !headers.has('content-disposition')) {
+        headers.set('content-disposition', `inline; filename="${filename}"`);
+    }
+    if (obj.range) {
+        const totalSize = obj.size;
+        const offset = 'offset' in obj.range ? (obj.range.offset ?? 0) : 0;
+        const length = 'length' in obj.range && obj.range.length !== undefined ? obj.range.length : totalSize - offset;
+        headers.set('content-range', `bytes ${offset}-${offset + length - 1}/${totalSize}`);
+        headers.set('content-length', String(length));
+        return new Response(obj.body, { status: 206, headers });
+    }
+    headers.set('content-length', String(obj.size));
+    return new Response(obj.body, { status: 200, headers });
+});
+
 app.post('/api/auth/support/ticket', async c => {
     const { InitDb } = await import('./util/db.client');
     const { supportTicketId } = await import('./util/ids');
