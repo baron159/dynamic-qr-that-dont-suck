@@ -22,10 +22,12 @@ import {
   Title,
   ActionIcon
 } from "@mantine/core";
+import { useClipboard } from '@mantine/hooks';
 import type { Qr } from "pc/browser.ts";
 import { useInfo } from '../contexts/info.ctx.tsx';
-import { InfoIcon, FloppyDiskBackIcon } from '@phosphor-icons/react';
+import { InfoIcon, FloppyDiskBackIcon, CopyIcon } from '@phosphor-icons/react';
 import { deepCopy } from "../util/obj.ops.ts";
+import { DateTime } from 'luxon';
 
 import styles from './qreditor.module.css';
 
@@ -177,6 +179,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
   const qrRef = useRef<QRCodeStyling | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { changeQrStatus, updateQr } = useInfo();
+  const clippy = useClipboard({timeout: 600});
 
   // Basic Data
   const [data, setData] = useState("https://example.com"); // THIS IS OUR Origin, and CANT be changed
@@ -409,12 +412,23 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
                     onChange={(e) => setNickname(e.currentTarget.value)}
                     placeholder="My Site"
                   />}
+                  {!!qrObj && <TextInput
+                    label="Tracked/Short-end URL"
+                    value={data}
+                    readOnly
+                    placeholder="This is a generated field"
+                    description="This URL has tracking enabled on it, this will only work when activated"
+                    rightSection={<ActionIcon onClick={() => clippy.copy(`${data}`)}>
+                      <CopyIcon weight="duotone" />
+                    </ActionIcon>}
+                  />}
                   <TextInput
                     label="URL"
                     value={sendTo}
                     onChange={(e) => setSendTo(e.currentTarget.value)}
                     placeholder="https://example.com"
                   />
+                  
                   {/* *** The activation is a dynamic QR option *** */}
                   {!!qrObj && <><Text size="1.1rem">Activation Status</Text>
                     <Group justify="space-between">
@@ -664,13 +678,7 @@ export function QrEditor({ disableQrTuningOptions = true, disableImgOptions = tr
               </Group>
               <Group justify='space-between' mt='0'>
                 <Text c='dimmed' size='0.9rem'>Updated</Text>
-                <Text size='1.2rem'>{qrObj?.updatedAt.toLocaleString('en-US', {
-                  year: '2-digit',
-                  month: 'numeric',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: '2-digit',
-                }) || 'N/A'}</Text>
+                <Text size='1.2rem'>{qrObj?.updatedAt && DateTime.fromJSDate(new Date(qrObj.updatedAt)).toFormat("LLL d ''yy '@' T")}</Text>
               </Group>
             </Stack>
           </Paper>
