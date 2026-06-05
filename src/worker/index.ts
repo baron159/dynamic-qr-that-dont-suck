@@ -210,7 +210,7 @@ app.on(['get', 'post', 'put'], '/api/auth/qr', async (c) => {
             const { createId } = await import('./util/ids');
             const qr = await client.qr.create({
                 data: {
-                    kvId: `${c.env.APP_HOST}/l/${createId()}`,
+                    kvId: `${c.env.LINK_BASE}/l/${createId()}`,
                     redirectLink: body.redirectLink,
                     userId: payload.userId,
                     nickname: body.nickname || 'QR Dynamics',

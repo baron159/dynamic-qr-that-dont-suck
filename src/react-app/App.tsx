@@ -19,7 +19,7 @@ function App() {
 
     return (
         <>
-            <AppShell header={{ height: 48, offset: true }}>
+            <AppShell header={{ height: 48, offset: true }} footer={{ collapsed: false, height: 12 }}>
                 <AppShell.Header>
                     <Header />
                 </AppShell.Header>

@@ -3,6 +3,8 @@
 
 JWT_SECRET="FILL"
 APP_HOST="https://dev.baron.solutions"
+# In develop this will match APP_HOST -- in production this is the qrs.best
+LINK_BASE="https://dev.baron.solutions"
 CUID_SEED="FILL"
 
 # Stripe Things
